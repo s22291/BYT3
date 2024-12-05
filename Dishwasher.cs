@@ -10,7 +10,7 @@ public class Dishwasher
     public DateTime? ReprimandFromCooksDate { get; set; }  // Nullable reprimand date
 
     // MultiValue Attribute
-    public List<string> DishwasherModelsWorkedOn { get; set; } = new List<string>(); // List of dishwasher models the person worked on
+//**to be discussed
 
     // Static Attribute
     public static int TotalDishwashers { get; private set; } = 0; // Total number of Dishwasher instances
