@@ -1,0 +1,15 @@
+/Users/juliopadilla/byt3/bin/Debug/net9.0/byt3
+/Users/juliopadilla/byt3/bin/Debug/net9.0/byt3.deps.json
+/Users/juliopadilla/byt3/bin/Debug/net9.0/byt3.runtimeconfig.json
+/Users/juliopadilla/byt3/bin/Debug/net9.0/byt3.dll
+/Users/juliopadilla/byt3/bin/Debug/net9.0/byt3.pdb
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.GeneratedMSBuildEditorConfig.editorconfig
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.AssemblyInfoInputs.cache
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.AssemblyInfo.cs
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.csproj.CoreCompileInputs.cache
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.sourcelink.json
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.dll
+/Users/juliopadilla/byt3/obj/Debug/net9.0/refint/byt3.dll
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.pdb
+/Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.genruntimeconfig.cache
+/Users/juliopadilla/byt3/obj/Debug/net9.0/ref/byt3.dll

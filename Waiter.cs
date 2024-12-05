@@ -6,6 +6,9 @@ public class Waiter
     // Basic Attribute
     public decimal AvgTipsValuePerDay { get; set; } // Average value of tips per day
 
+    // Customers served daily (MUST be defined to avoid CS0103)
+    public int AverageCustomersServedDaily { get; set; }
+
     // Optional Attribute
     public string ShiftType { get; set; } // Optional shift type (e.g., "Morning", "Evening")
 
@@ -26,11 +29,12 @@ public class Waiter
     {
         get
         {
+            // Ensure AverageCustomersServedDaily is defined and used properly
             if (AverageCustomersServedDaily > 0)
             {
                 return AvgTipsValuePerDay / AverageCustomersServedDaily; // Calculate average tips per customer
             }
-            return 0;
+            return 0; // Avoid division by zero
         }
     }
 
@@ -38,7 +42,7 @@ public class Waiter
     public Waiter(decimal avgTipsValuePerDay, int averageCustomersServedDaily, string shiftType, DateTime dateHired)
     {
         AvgTipsValuePerDay = avgTipsValuePerDay;
-        AverageCustomersServedDaily = averageCustomersServedDaily;
+        AverageCustomersServedDaily = averageCustomersServedDaily; // Ensure this matches the property name
         ShiftType = shiftType; // Optional attribute
         DateHired = dateHired;
 
@@ -64,8 +68,10 @@ public class Waiter
         Console.WriteLine("\n--- All Waiters ---");
         foreach (var waiter in Waiters)
         {
+            // Access instance methods and properties
             waiter.DisplayWaiterInfo();
             Console.WriteLine();
         }
     }
 }
+

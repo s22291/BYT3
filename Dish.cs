@@ -35,7 +35,7 @@ public class Dish
     }
 
     // Constructor
-    public Dish(string courseType, string serviceCutleryType, DateTime dateAddedToMenu, string specialDiet = null)
+    public Dish(string courseType, string serviceCutleryType, DateTime dateAddedToMenu, string? specialDiet = null)
     {
         CourseType = courseType;
         ServiceCutleryType = serviceCutleryType;

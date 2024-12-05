@@ -6,6 +6,10 @@ public class Seating
     // Basic Attribute
     public int Number { get; set; } // Unique identifier for the seating (ID)
 
+    public string SeatingType { get; set; } // Type of seating (e.g., "Booth", "Table")
+
+    public bool IfInside { get; set; } // True if the seating is located inside, false otherwise
+
     // Optional Attribute
     public string SpecialNote { get; set; } // Optional note about the seating (e.g., "Reserved for VIPs")
 
@@ -32,10 +36,10 @@ public class Seating
     }
 
     // Constructor
-    public Seating(int number, string type, bool ifInside, DateTime lastMaintenanceDate, string specialNote = null)
+    public Seating(int number, string type, bool ifInside, DateTime lastMaintenanceDate, string? specialNote = null)
     {
         Number = number;
-        Type = type;
+        SeatingType = type;
         IfInside = ifInside;
         LastMaintenanceDate = lastMaintenanceDate;
         SpecialNote = specialNote; // Optional attribute
@@ -49,7 +53,7 @@ public class Seating
     public void DisplaySeatingInfo()
     {
         Console.WriteLine($"Seating Number: {Number}");
-        Console.WriteLine($"Type: {Type}");
+        Console.WriteLine($"Seating Type: {SeatingType}");
         Console.WriteLine($"Located Inside: {(IfInside ? "Yes" : "No")}");
         Console.WriteLine($"Last Maintenance Date: {LastMaintenanceDate:yyyy-MM-dd}");
         Console.WriteLine($"Needs Maintenance: {(NeedsMaintenance ? "Yes" : "No")}");

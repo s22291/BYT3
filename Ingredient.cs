@@ -43,7 +43,7 @@ public class Ingredient
     }
 
     // Constructor
-    public Ingredient(string type, List<string> countryOfOrigin, List<decimal> priceOnMarket, DateTime dateAddedToInventory, string supplier = null)
+    public Ingredient(string type, List<string> countryOfOrigin, List<decimal> priceOnMarket, DateTime dateAddedToInventory, string? supplier = null)
     {
         if (countryOfOrigin.Count < 1 || countryOfOrigin.Count > 3)
         {

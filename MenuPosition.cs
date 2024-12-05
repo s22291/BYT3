@@ -43,7 +43,7 @@ public class MenuPosition
     }
 
     // Constructor
-    public MenuPosition(string name, decimal productionCost, decimal sellPrice, string temperature, DateTime dateAddedToMenu, string allergens = null)
+    public MenuPosition(string name, decimal productionCost, decimal sellPrice, string temperature, DateTime dateAddedToMenu, string? allergens = null)
     {
         Name = name;
         ProductionCost = productionCost;

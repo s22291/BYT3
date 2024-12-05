@@ -35,7 +35,7 @@ public class Drink
     }
 
     // Constructor
-    public Drink(string drinkwareType, bool ifSparkling, DateTime dateAddedToMenu, string flavorProfile = null)
+    public Drink(string drinkwareType, bool ifSparkling, DateTime dateAddedToMenu, string? flavorProfile = null)
     {
         DrinkwareType = drinkwareType;
         IfSparkling = ifSparkling;

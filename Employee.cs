@@ -9,6 +9,14 @@ public class Employee
     public decimal Salary { get; set; }     // Employee's monthly salary (decimal for monetary values)
     public int Experience { get; set; }     // Employee's years of experience
 
+    public Employee()
+    {
+        // Optional: Initialize default values for properties
+        Name = "Unknown";
+        Surname = "Unknown";
+        Salary = 0m;
+        Experience = 0;
+    }
     // Optional attribute
     public DateTime? WorkedOvertimeDate { get; set; } // Nullable to handle 0..1 cardinality
 
