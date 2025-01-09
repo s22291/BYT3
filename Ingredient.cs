@@ -15,10 +15,21 @@ public class Ingredient
     public string Type { get; set; } // The type of ingredient (e.g., "Spice", "Vegetable")
 
     // MultiValue Attribute
-    public List<string> CountryOfOrigin { get; set; } // List of countries where the ingredient originates (1 to 3)
+    private List<string> countryOfOrigin = new List<string>();
+
+    public List<string> CountryOfOrigin { get => countryOfOrigin; set
+        {
+            if (countryOfOrigin.Count < 1 || countryOfOrigin.Count > 3)
+            {
+                throw new ArgumentException("Country of origin must have between 1 and 3 entries.");
+            }
+            countryOfOrigin = value;
+
+        }
+    } // List of countries where the ingredient originates (1 to 3)
 
     // MultiValue Attribute
-    public List<decimal> PriceOnMarket { get; set; } // List of market prices for the ingredient
+    public List<decimal> PriceOnMarket { get; private set; } // List of market prices for the ingredient
 
     // Optional Attribute
     public string Supplier { get; set; } // Optional supplier name

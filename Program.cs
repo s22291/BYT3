@@ -7,6 +7,8 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 
 class Program
@@ -32,6 +34,12 @@ class Program
         Console.WriteLine(employee.Skills[0]);
         Console.WriteLine(employee.Skills[1]);
 
+        List<string> lisr = new List<string> { "d", "s", "s" };
+        List<decimal> por = new List<decimal> { 2, 2, 4 };
+
+        Ingredient ingredient = new Ingredient("sxs", lisr, por, DateTime.Now);
+
+        ingredient.CountryOfOrigin.Add("Poland");
     }
 }
 

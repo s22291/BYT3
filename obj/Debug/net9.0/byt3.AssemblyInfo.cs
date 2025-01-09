@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("byt3")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6948956e559f89350efc893cdd322ae048352fbd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+72581085f7f654d67f633a004532b01493d44844")]
 [assembly: System.Reflection.AssemblyProductAttribute("byt3")]
 [assembly: System.Reflection.AssemblyTitleAttribute("byt3")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
