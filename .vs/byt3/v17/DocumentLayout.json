@@ -1,0 +1,122 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|c:\\users\\atout.m\\onedrive - polsko-japo\u0144ska akademia technik komputerowych\\git clone byt\\byt3\\seating.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|solutionrelative:seating.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|c:\\users\\atout.m\\onedrive - polsko-japo\u0144ska akademia technik komputerowych\\git clone byt\\byt3\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|c:\\users\\atout.m\\onedrive - polsko-japo\u0144ska akademia technik komputerowych\\git clone byt\\byt3\\favoriteequipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|solutionrelative:favoriteequipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|c:\\users\\atout.m\\onedrive - polsko-japo\u0144ska akademia technik komputerowych\\git clone byt\\byt3\\dishwasher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|solutionrelative:dishwasher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|c:\\users\\atout.m\\onedrive - polsko-japo\u0144ska akademia technik komputerowych\\git clone byt\\byt3\\employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|solutionrelative:employee.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|c:\\users\\atout.m\\onedrive - polsko-japo\u0144ska akademia technik komputerowych\\git clone byt\\byt3\\cook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{76C71936-CDEA-4F68-9396-C12978720402}|byt3.csproj|solutionrelative:cook.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Seating.cs",
+              "DocumentMoniker": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Seating.cs",
+              "RelativeDocumentMoniker": "Seating.cs",
+              "ToolTip": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Seating.cs",
+              "RelativeToolTip": "Seating.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T18:44:36.386Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Employee.cs",
+              "DocumentMoniker": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Employee.cs",
+              "RelativeDocumentMoniker": "Employee.cs",
+              "ToolTip": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Employee.cs",
+              "RelativeToolTip": "Employee.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T18:39:49.176Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Dishwasher.cs",
+              "DocumentMoniker": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Dishwasher.cs",
+              "RelativeDocumentMoniker": "Dishwasher.cs",
+              "ToolTip": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Dishwasher.cs",
+              "RelativeToolTip": "Dishwasher.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAswAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T18:37:32.569Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "FavoriteEquipment.cs",
+              "DocumentMoniker": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\FavoriteEquipment.cs",
+              "RelativeDocumentMoniker": "FavoriteEquipment.cs",
+              "ToolTip": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\FavoriteEquipment.cs",
+              "RelativeToolTip": "FavoriteEquipment.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T18:35:32.955Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAYwAsAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T18:34:44.112Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Cook.cs",
+              "DocumentMoniker": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Cook.cs",
+              "RelativeDocumentMoniker": "Cook.cs",
+              "ToolTip": "C:\\Users\\atout.m\\OneDrive - Polsko-Japo\u0144ska Akademia Technik Komputerowych\\Git clone BYT\\BYT3\\Cook.cs",
+              "RelativeToolTip": "Cook.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T18:33:47.681Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

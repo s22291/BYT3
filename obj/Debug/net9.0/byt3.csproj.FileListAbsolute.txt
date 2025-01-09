@@ -13,3 +13,18 @@
 /Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.pdb
 /Users/juliopadilla/byt3/obj/Debug/net9.0/byt3.genruntimeconfig.cache
 /Users/juliopadilla/byt3/obj/Debug/net9.0/ref/byt3.dll
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.AssemblyInfoInputs.cache
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.AssemblyInfo.cs
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.csproj.CoreCompileInputs.cache
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.sourcelink.json
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.dll
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\refint\byt3.dll
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.pdb
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\bin\Debug\net9.0\byt3.exe
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\bin\Debug\net9.0\byt3.deps.json
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\bin\Debug\net9.0\byt3.runtimeconfig.json
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\bin\Debug\net9.0\byt3.dll
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\bin\Debug\net9.0\byt3.pdb
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\byt3.genruntimeconfig.cache
+C:\Users\atout.m\OneDrive - Polsko-Japońska Akademia Technik Komputerowych\Git clone BYT\BYT3\obj\Debug\net9.0\ref\byt3.dll

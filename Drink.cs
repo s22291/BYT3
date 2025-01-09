@@ -1,3 +1,11 @@
+/** \file     Drink.cs
+*  \author    Aslan,Julio,Mohammad,Wiktor
+*  \version   Final
+*  \date      2024
+*  \bug       No bugs so far
+*  \copyright Polish and Japanies Information Technology 
+*/
+
 using System;
 using System.Collections.Generic;
 

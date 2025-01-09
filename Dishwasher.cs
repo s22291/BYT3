@@ -1,5 +1,14 @@
+/** \file     Dishwasher.cs
+*  \author    Aslan,Julio,Mohammad,Wiktor
+*  \version   Final
+*  \date      2024
+*  \bug       No bugs so far
+*  \copyright Polish and Japanies Information Technology 
+*/
+
 using System;
 using System.Collections.Generic;
+
 
 public class Dishwasher
 {
@@ -10,7 +19,7 @@ public class Dishwasher
     public DateTime? ReprimandFromCooksDate { get; set; }  // Nullable reprimand date
 
     // MultiValue Attribute
-//**to be discussed
+    public List<string> DishwasherModelsWorkedOn { get; set; } = new List<string>(); // List of dishwasher models worked on
 
     // Static Attribute
     public static int TotalDishwashers { get; private set; } = 0; // Total number of Dishwasher instances

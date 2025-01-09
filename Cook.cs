@@ -1,3 +1,12 @@
+/** \file     Cook.cs
+*  \author    Aslan,Julio,Mohammad,Wiktor
+*  \version   Final
+*  \date      2024
+*  \bug       No bugs so far
+*  \copyright Polish and Japanies Information Technology 
+*/
+
+// Purpose: Define the Cook class with basic, optional, multi-value, static, complex, and derived attributes, as well as a constructor and methods to display cook information and all cooks.
 using System;
 using System.Collections.Generic;
 
