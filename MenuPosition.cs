@@ -15,7 +15,6 @@ public class MenuPosition
     public string Name { get; set; } // Name of the menu item
 
     // Optional Attribute
-    // make it otional
     public string Description { get; set; }
     public string Allergens { get; set; } // Optional information about allergens (e.g., "Contains nuts")
 
