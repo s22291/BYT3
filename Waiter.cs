@@ -18,6 +18,7 @@ public class Waiter
     public int AverageCustomersServedDaily { get; set; }
 
     // Optional Attribute
+    //  Comments 
     public string ShiftType { get; set; } // Optional shift type (e.g., "Morning", "Evening")
 
     // MultiValue Attribute
