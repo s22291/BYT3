@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class Waiter
 {
     // Basic Attribute
@@ -82,5 +87,40 @@ public class Waiter
             Console.WriteLine();
         }
     }
-}
 
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Waiter>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Waiters);
+            }
+            Console.WriteLine("Waiters saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Waiter>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Waiters = (List<Waiter>?)serializer.Deserialize(reader) ?? new List<Waiter>();
+            }
+            Console.WriteLine("Waiters loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
+        }
+    }
+}

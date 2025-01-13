@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class Drink
 {
     // Basic Attribute
@@ -76,5 +81,42 @@ public class Drink
             Console.WriteLine();
         }
     }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Drink>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Drinks);
+            }
+            Console.WriteLine("Drinks saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Drink>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Drinks = (List<Drink>?)serializer.Deserialize(reader) ?? new List<Drink>();
+            }
+            Console.WriteLine("Drinks loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
+        }
+    }
 }
+
 

@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class Mixologist
 {
     // Basic Attribute
@@ -65,6 +70,42 @@ public class Mixologist
         {
             mixologist.DisplayMixologistInfo();
             Console.WriteLine();
+        }
+    }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Mixologist>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Mixologists);
+            }
+            Console.WriteLine("Mixologists saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Mixologist>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Mixologists = (List<Mixologist>?)serializer.Deserialize(reader) ?? new List<Mixologist>();
+            }
+            Console.WriteLine("Mixologists loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
         }
     }
 }

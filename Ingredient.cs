@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class Ingredient
 {
     // Basic Attribute
@@ -16,15 +21,16 @@ public class Ingredient
 
     // MultiValue Attribute
     private List<string> countryOfOrigin = new List<string>();
-
-    public List<string> CountryOfOrigin { get => countryOfOrigin; set
+    public List<string> CountryOfOrigin
+    {
+        get => countryOfOrigin;
+        set
         {
-            if (countryOfOrigin.Count < 1 || countryOfOrigin.Count > 3)
+            if (value.Count < 1 || value.Count > 3)
             {
                 throw new ArgumentException("Country of origin must have between 1 and 3 entries.");
             }
             countryOfOrigin = value;
-
         }
     } // List of countries where the ingredient originates (1 to 3)
 
@@ -108,6 +114,42 @@ public class Ingredient
         {
             ingredient.DisplayIngredientInfo();
             Console.WriteLine();
+        }
+    }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Ingredient>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Ingredients);
+            }
+            Console.WriteLine("Ingredients saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Ingredient>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Ingredients = (List<Ingredient>?)serializer.Deserialize(reader) ?? new List<Ingredient>();
+            }
+            Console.WriteLine("Ingredients loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
         }
     }
 }

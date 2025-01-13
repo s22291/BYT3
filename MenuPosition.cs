@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 
 public class MenuPosition
 {
@@ -90,5 +92,42 @@ public class MenuPosition
             Console.WriteLine();
         }
     }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<MenuPosition>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, MenuPositions);
+            }
+            Console.WriteLine("Menu positions saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<MenuPosition>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                MenuPositions = (List<MenuPosition>?)serializer.Deserialize(reader) ?? new List<MenuPosition>();
+            }
+            Console.WriteLine("Menu positions loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
+        }
+    }
 }
+
 

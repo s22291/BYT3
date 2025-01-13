@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class Seating
 {
     // Basic Attribute
@@ -79,5 +84,42 @@ public class Seating
             Console.WriteLine();
         }
     }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Seating>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Seatings);
+            }
+            Console.WriteLine("Seatings saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Seating>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Seatings = (List<Seating>?)serializer.Deserialize(reader) ?? new List<Seating>();
+            }
+            Console.WriteLine("Seatings loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
+        }
+    }
 }
+
 

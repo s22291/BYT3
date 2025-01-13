@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class Dish
 {
     // Basic Attribute
@@ -76,5 +81,42 @@ public class Dish
             Console.WriteLine();
         }
     }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Dish>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Dishes);
+            }
+            Console.WriteLine("Dishes saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Dish>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Dishes = (List<Dish>?)serializer.Deserialize(reader) ?? new List<Dish>();
+            }
+            Console.WriteLine("Dishes loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
+        }
+    }
 }
+
 

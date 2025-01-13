@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 
 public class Employee
 {
@@ -86,4 +88,41 @@ public class Employee
             Console.WriteLine();
         }
     }
+
+    // Serialization method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<Employee>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Employees);
+            }
+            Console.WriteLine("Employees saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization method
+    public static void LoadFromFile(string filePath)
+{
+    try
+    {
+        XmlSerializer serializer = new XmlSerializer(typeof(List<Employee>));
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            Employees = (List<Employee>?)serializer.Deserialize(reader) ?? new List<Employee>();
+        }
+        Console.WriteLine("Employees loaded from file successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error loading file: {ex.Message}");
+    }
+}
+
 }

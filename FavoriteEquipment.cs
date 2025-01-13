@@ -9,6 +9,11 @@
 using System;
 using System.Collections.Generic;
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
+
 public class FavoriteEquipment
 {
     // Basic Attribute
@@ -74,6 +79,42 @@ public class FavoriteEquipment
         {
             equipment.DisplayEquipmentInfo();
             Console.WriteLine();
+        }
+    }
+
+    // Serialization Method
+    public static void SaveToFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<FavoriteEquipment>));
+            using (StreamWriter writer = new StreamWriter(filePath))
+            {
+                serializer.Serialize(writer, Equipments);
+            }
+            Console.WriteLine("FavoriteEquipment saved to file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+        }
+    }
+
+    // Deserialization Method
+    public static void LoadFromFile(string filePath)
+    {
+        try
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(List<FavoriteEquipment>));
+            using (StreamReader reader = new StreamReader(filePath))
+            {
+                Equipments = (List<FavoriteEquipment>?)serializer.Deserialize(reader) ?? new List<FavoriteEquipment>();
+            }
+            Console.WriteLine("FavoriteEquipment loaded from file successfully.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading file: {ex.Message}");
         }
     }
 }
