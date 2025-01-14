@@ -8,52 +8,46 @@
 
 using System;
 using System.Collections.Generic;
-
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
 public class Dish
 {
-    // Basic Attribute
-    public string CourseType { get; set; } // The course type (e.g., "Starter", "Main", "Dessert")
-
-    // Optional Attribute
-    public string SpecialDiet { get; set; } // Optional special diet (e.g., "Vegan", "Gluten-Free")
-
-    // MultiValue Attribute
-    public List<string> Ingredients { get; set; } = new List<string>(); // List of ingredients used in the dish
-
-    // Static Attribute
-    public static int TotalDishes { get; private set; } = 0; // Total number of Dish instances created
-
-    // Class Extent
-    private static List<Dish> Dishes = new List<Dish>(); // Stores all Dish instances
-
-    // Complex Attribute
-    public DateTime DateAddedToMenu { get; set; } // The date the dish was added to the menu
-
-    // Basic Attribute
-    public string ServiceCutleryType { get; set; } // The type of service cutlery (e.g., "Fork", "Spoon", "Knife")
-
-    // Derived Attribute
-    public bool IsNew
+    // Enum for Course Type
+    public enum CourseTypeEnum
     {
-        get
-        {
-            // If the dish was added to the menu in the last 30 days, it is considered "new"
-            return (DateTime.Now - DateAddedToMenu).TotalDays <= 30;
-        }
+        Starter,
+        Main,
+        Dessert
     }
 
-    // Constructor
-    public Dish(string courseType, string serviceCutleryType, DateTime dateAddedToMenu, string? specialDiet = null)
+    // Private fields
+    private CourseTypeEnum courseType; // The course type (Starter, Main, Dessert)
+    private string serviceCutleryType; // The type of service cutlery (e.g., Fork, Spoon, Knife)
+
+    // Public read-only properties
+    public CourseTypeEnum CourseType
     {
-        CourseType = courseType;
-        ServiceCutleryType = serviceCutleryType;
-        DateAddedToMenu = dateAddedToMenu;
-        SpecialDiet = specialDiet; // Optional attribute
+        get { return courseType; }
+    }
+
+    public string ServiceCutleryType
+    {
+        get { return serviceCutleryType; }
+    }
+
+    // Static attribute to count total dishes
+    public static int TotalDishes { get; private set; } = 0;
+
+    // Class extent to store all instances
+    private static List<Dish> Dishes = new List<Dish>();
+
+    // Constructor
+    public Dish(CourseTypeEnum courseType, string serviceCutleryType)
+    {
+        // Validate inputs
+        this.courseType = courseType; // Enum ensures only valid CourseType values are used
+        this.serviceCutleryType = Validator.ValidateNonEmptyString(serviceCutleryType, nameof(ServiceCutleryType));
 
         // Increment static count and add to class extent
         TotalDishes++;
@@ -65,13 +59,9 @@ public class Dish
     {
         Console.WriteLine($"Course Type: {CourseType}");
         Console.WriteLine($"Service Cutlery Type: {ServiceCutleryType}");
-        Console.WriteLine($"Date Added to Menu: {DateAddedToMenu:yyyy-MM-dd}");
-        Console.WriteLine($"Special Diet: {SpecialDiet ?? "None"}"); // Handles optional attribute
-        Console.WriteLine($"Is New: {(IsNew ? "Yes" : "No")}");
-        Console.WriteLine("Ingredients: " + (Ingredients.Count > 0 ? string.Join(", ", Ingredients) : "None"));
     }
 
-    // Static Method to Display All Dishes
+    // Static method to display all dishes
     public static void DisplayAllDishes()
     {
         Console.WriteLine("\n--- All Dishes ---");
@@ -82,7 +72,7 @@ public class Dish
         }
     }
 
-    // Serialization Method
+    // Serialization method
     public static void SaveToFile(string filePath)
     {
         try
@@ -100,7 +90,7 @@ public class Dish
         }
     }
 
-    // Deserialization Method
+    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try
@@ -118,5 +108,3 @@ public class Dish
         }
     }
 }
-
-

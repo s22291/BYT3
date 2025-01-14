@@ -13,55 +13,74 @@ using System.Xml.Serialization;
 
 public class MenuPosition
 {
-    // Basic Attribute
-    public string Name { get; set; } // Name of the menu item
+    // Private fields
+    private string name; // Name of the menu item
+    private decimal productionCost; // Production cost of the menu item
+    private decimal sellPrice; // Selling price of the menu item
+    private string temperature; // Temperature category (e.g., "Hot", "Cold")
 
-    // Optional Attribute
-    public string Description { get; set; }
-    public string Allergens { get; set; } // Optional information about allergens (e.g., "Contains nuts")
+    // Public read-only properties
+    public string Name
+    {
+        get { return name; }
+    }
 
-    // MultiValue Attribute
-    public List<string> Ingredients { get; set; } = new List<string>(); // List of ingredients for the menu item
+    public decimal ProductionCost
+    {
+        get { return productionCost; }
+    }
 
-    // Static Attribute
-    public static int TotalMenuPositions { get; private set; } = 0; // Total number of MenuPosition instances created
+    public decimal SellPrice
+    {
+        get { return sellPrice; }
+    }
 
-    // Class Extent
-    private static List<MenuPosition> MenuPositions = new List<MenuPosition>(); // Stores all MenuPosition instances
+    public string Temperature
+    {
+        get { return temperature; }
+    }
 
-    // Complex Attribute
-    public DateTime DateAddedToMenu { get; set; } // Date when the menu item was added to the menu
+    // Static attribute to track total menu positions
+    public static int TotalMenuPositions { get; private set; } = 0;
 
-    // Basic Attributes
-    public decimal ProductionCost { get; set; } // Production cost of the menu item
-    public decimal SellPrice { get; set; }      // Selling price of the menu item
-    public string Temperature { get; set; }    // Temperature category (e.g., "Hot", "Cold")
+    // Class extent (list of all menu positions)
+    private static List<MenuPosition> MenuPositions = new List<MenuPosition>();
 
-    // Constant Desired Profit Margin
+    // Constant for Desired Profit Margin
     public const decimal DesiredProfitMargin = 0.09m;
 
-    // Derived Attribute
+    // Derived attribute
     public decimal ActualProfitMargin
     {
         get
         {
-            if (SellPrice > 0)
+            if (sellPrice > 0)
             {
-                return (SellPrice - ProductionCost) / SellPrice;
+                return (sellPrice - productionCost) / sellPrice;
             }
             return 0; // Avoid division by zero
         }
     }
 
     // Constructor
-    public MenuPosition(string name, decimal productionCost, decimal sellPrice, string temperature, DateTime dateAddedToMenu, string? allergens = null)
+    public MenuPosition(string name, decimal productionCost, decimal sellPrice, string temperature)
     {
-        Name = name;
-        ProductionCost = productionCost;
-        SellPrice = sellPrice;
-        Temperature = temperature;
-        DateAddedToMenu = dateAddedToMenu;
-        Allergens = allergens; // Optional attribute
+        // Validate inputs
+        this.name = Validator.ValidateNonEmptyString(name, nameof(Name));
+        this.temperature = Validator.ValidateNonEmptyString(temperature, nameof(Temperature));
+
+        if (productionCost < 0)
+        {
+            throw new ArgumentException($"{nameof(ProductionCost)} cannot be negative.");
+        }
+
+        if (sellPrice <= 0)
+        {
+            throw new ArgumentException($"{nameof(SellPrice)} must be greater than zero.");
+        }
+
+        this.productionCost = productionCost;
+        this.sellPrice = sellPrice;
 
         // Increment static count and add to class extent
         TotalMenuPositions++;
@@ -75,14 +94,11 @@ public class MenuPosition
         Console.WriteLine($"Production Cost: {ProductionCost:C}");
         Console.WriteLine($"Sell Price: {SellPrice:C}");
         Console.WriteLine($"Temperature: {Temperature}");
-        Console.WriteLine($"Date Added to Menu: {DateAddedToMenu:yyyy-MM-dd}");
-        Console.WriteLine($"Allergens: {Allergens ?? "None"}");
         Console.WriteLine($"Desired Profit Margin: {DesiredProfitMargin:P}");
         Console.WriteLine($"Actual Profit Margin: {ActualProfitMargin:P}");
-        Console.WriteLine("Ingredients: " + (Ingredients.Count > 0 ? string.Join(", ", Ingredients) : "None"));
     }
 
-    // Static Method to Display All Menu Positions
+    // Static method to display all menu positions
     public static void DisplayAllMenuPositions()
     {
         Console.WriteLine("\n--- All Menu Positions ---");
@@ -93,7 +109,7 @@ public class MenuPosition
         }
     }
 
-    // Serialization Method
+    // Serialization method
     public static void SaveToFile(string filePath)
     {
         try
@@ -111,7 +127,7 @@ public class MenuPosition
         }
     }
 
-    // Deserialization Method
+    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try

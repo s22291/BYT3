@@ -8,57 +8,60 @@
 
 using System;
 using System.Collections.Generic;
-
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
 public class Waiter
 {
-    // Basic Attribute
-    public decimal AvgTipsValuePerDay { get; set; } // Average value of tips per day
+    // Private fields (no direct external access)
+    private decimal avgTipsValuePerDay; // Average value of tips per day
+    private int averageCustomersServedDaily; // Average customers served daily
 
-    // Customers served daily (MUST be defined to avoid CS0103)
-    public int AverageCustomersServedDaily { get; set; }
+    // Public read-only properties
+    public decimal AvgTipsValuePerDay
+    {
+        get { return avgTipsValuePerDay; } // Expose the value, but not modifiable
+    }
 
-    // Optional Attribute
-    //  Comments 
-    public string ShiftType { get; set; } // Optional shift type (e.g., "Morning", "Evening")
+    public int AverageCustomersServedDaily
+    {
+        get { return averageCustomersServedDaily; } // Expose the value, but not modifiable
+    }
 
-    // MultiValue Attribute
-    public List<string> FavoriteTables { get; set; } = new List<string>(); // Favorite tables the waiter likes to serve
+    // Static attribute (tracks total number of waiters)
+    public static int TotalWaiters { get; private set; } = 0;
 
-    // Static Attribute
-    public static int TotalWaiters { get; private set; } = 0; // Total number of Waiters
+    // Class extent (stores all waiter instances privately)
+    private static List<Waiter> Waiters = new List<Waiter>();
 
-    // Class Extent
-    private static List<Waiter> Waiters = new List<Waiter>(); // Stores all Waiter instances
-
-    // Complex Attribute
-    public DateTime DateHired { get; set; } // Date the waiter was hired
-
-    // Derived Attribute
+    // Derived attribute (calculated property, cannot be modified)
     public decimal AverageTipsPerCustomer
     {
         get
         {
-            // Ensure AverageCustomersServedDaily is defined and used properly
-            if (AverageCustomersServedDaily > 0)
+            if (averageCustomersServedDaily > 0)
             {
-                return AvgTipsValuePerDay / AverageCustomersServedDaily; // Calculate average tips per customer
+                return avgTipsValuePerDay / averageCustomersServedDaily; // Avoid division by zero
             }
-            return 0; // Avoid division by zero
+            return 0;
         }
     }
 
-    // Constructor
-    public Waiter(decimal avgTipsValuePerDay, int averageCustomersServedDaily, string shiftType, DateTime dateHired)
+    // Constructor (the only way to set values)
+    public Waiter(decimal avgTipsValuePerDay, int averageCustomersServedDaily)
     {
-        AvgTipsValuePerDay = avgTipsValuePerDay;
-        AverageCustomersServedDaily = averageCustomersServedDaily; // Ensure this matches the property name
-        ShiftType = shiftType; // Optional attribute
-        DateHired = dateHired;
+        if (avgTipsValuePerDay < 0)
+        {
+            throw new ArgumentException("Average tips value per day cannot be negative.");
+        }
+
+        if (averageCustomersServedDaily <= 0)
+        {
+            throw new ArgumentException("Average customers served daily must be greater than zero.");
+        }
+
+        this.avgTipsValuePerDay = avgTipsValuePerDay;
+        this.averageCustomersServedDaily = averageCustomersServedDaily;
 
         // Increment static count and add to class extent
         TotalWaiters++;
@@ -68,27 +71,23 @@ public class Waiter
     // Method to display waiter information
     public void DisplayWaiterInfo()
     {
-        Console.WriteLine($"Average Tips Value Per Day: {AvgTipsValuePerDay:C}"); // Format as currency
+        Console.WriteLine($"Average Tips Value Per Day: {AvgTipsValuePerDay:C}");
         Console.WriteLine($"Average Customers Served Daily: {AverageCustomersServedDaily}");
-        Console.WriteLine($"Average Tips Per Customer: {AverageTipsPerCustomer:C}"); // Derived attribute
-        Console.WriteLine($"Shift Type: {ShiftType ?? "None"}"); // Handles optional attribute
-        Console.WriteLine($"Date Hired: {DateHired:yyyy-MM-dd}");
-        Console.WriteLine("Favorite Tables: " + (FavoriteTables.Count > 0 ? string.Join(", ", FavoriteTables) : "None"));
+        Console.WriteLine($"Average Tips Per Customer: {AverageTipsPerCustomer:C}");
     }
 
-    // Static Method to Display All Waiters
+    // Static method to display all waiters
     public static void DisplayAllWaiters()
     {
         Console.WriteLine("\n--- All Waiters ---");
         foreach (var waiter in Waiters)
         {
-            // Access instance methods and properties
             waiter.DisplayWaiterInfo();
             Console.WriteLine();
         }
     }
 
-    // Serialization Method
+    // Serialization method
     public static void SaveToFile(string filePath)
     {
         try
@@ -106,7 +105,7 @@ public class Waiter
         }
     }
 
-    // Deserialization Method
+    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try

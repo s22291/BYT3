@@ -6,8 +6,11 @@
 *  \copyright Polish and Japanies Information Technology 
 */
 
+
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Xml.Serialization;
 
 using System;
 using System.Collections.Generic;
@@ -16,44 +19,44 @@ using System.Xml.Serialization;
 
 public class Drink
 {
-    // Basic Attribute
-    public string DrinkwareType { get; set; } // Type of drinkware (e.g., "Glass", "Mug", "Wine Glass")
-
-    // Basic Attribute
-    public bool IfSparkling { get; set; } // Whether the drink is sparkling or not
-
-    // Optional Attribute
-    public string FlavorProfile { get; set; } // Optional attribute to specify the drink's flavor profile (e.g., "Citrus", "Sweet")
-
-    // MultiValue Attribute
-    public List<string> Ingredients { get; set; } = new List<string>(); // List of ingredients in the drink
-
-    // Static Attribute
-    public static int TotalDrinks { get; private set; } = 0; // Total number of Drink instances created
-
-    // Class Extent
-    private static List<Drink> Drinks = new List<Drink>(); // Stores all Drink instances
-
-    // Complex Attribute
-    public DateTime DateAddedToMenu { get; set; } // Date when the drink was added to the menu
-
-    // Derived Attribute
-    public bool IsAlcoholic
+    // Enum for Drinkware Type
+    public enum DrinkwareTypeEnum
     {
-        get
-        {
-            // Check if the list of ingredients contains alcohol-related terms
-            return Ingredients.Exists(ingredient => ingredient.ToLower().Contains("alcohol") || ingredient.ToLower().Contains("vodka") || ingredient.ToLower().Contains("wine"));
-        }
+        Glass,
+        Mug,
+        WineGlass,
+        PlasticGlass
     }
 
-    // Constructor
-    public Drink(string drinkwareType, bool ifSparkling, DateTime dateAddedToMenu, string? flavorProfile = null)
+    // Private fields
+    private DrinkwareTypeEnum drinkwareType; // Type of drinkware
+    private bool ifSparkling; // Whether the drink is sparkling or not
+
+    // Public read-only properties
+    public DrinkwareTypeEnum DrinkwareType
     {
-        DrinkwareType = drinkwareType;
-        IfSparkling = ifSparkling;
-        DateAddedToMenu = dateAddedToMenu;
-        FlavorProfile = flavorProfile; // Optional attribute
+        get { return drinkwareType; }
+    }
+
+    public bool IfSparkling
+    {
+        get { return ifSparkling; }
+    }
+
+    // Static attribute to count total drinks
+    public static int TotalDrinks { get; private set; } = 0;
+
+    // Class extent to store all drink instances
+    private static List<Drink> Drinks = new List<Drink>();
+
+    // Constructor
+    public Drink(DrinkwareTypeEnum drinkwareType, bool ifSparkling)
+    {
+        // Validate drinkware type using Evaluator (assumes it throws if invalid)
+        this.drinkwareType = drinkwareType;
+
+        // Assign other fields
+        this.ifSparkling = ifSparkling;
 
         // Increment static count and add to class extent
         TotalDrinks++;
@@ -65,13 +68,9 @@ public class Drink
     {
         Console.WriteLine($"Drinkware Type: {DrinkwareType}");
         Console.WriteLine($"Is Sparkling: {(IfSparkling ? "Yes" : "No")}");
-        Console.WriteLine($"Date Added to Menu: {DateAddedToMenu:yyyy-MM-dd}");
-        Console.WriteLine($"Flavor Profile: {FlavorProfile ?? "None"}");
-        Console.WriteLine($"Is Alcoholic: {(IsAlcoholic ? "Yes" : "No")}");
-        Console.WriteLine("Ingredients: " + (Ingredients.Count > 0 ? string.Join(", ", Ingredients) : "None"));
     }
 
-    // Static Method to Display All Drinks
+    // Static method to display all drinks
     public static void DisplayAllDrinks()
     {
         Console.WriteLine("\n--- All Drinks ---");
@@ -82,7 +81,7 @@ public class Drink
         }
     }
 
-    // Serialization Method
+    // Serialization method
     public static void SaveToFile(string filePath)
     {
         try
@@ -100,7 +99,7 @@ public class Drink
         }
     }
 
-    // Deserialization Method
+    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try

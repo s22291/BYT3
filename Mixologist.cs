@@ -8,31 +8,46 @@
 
 using System;
 using System.Collections.Generic;
-
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+
 public class Mixologist
 {
-    // Basic Attribute
-    public bool OwnsUniform { get; set; } // Indicates whether the mixologist owns a uniform
+    // Private backing field for OwnsUniform
+    private bool ownsUniform;
 
-    // Optional Attribute
-    public string Certification { get; set; } // Optional certification (e.g., "Bartending License")
+    // Basic Attribute with validation
+    public bool OwnsUniform
+    {
+        get { return ownsUniform; }
+        private set
+        {
+            // Validate that the mixologist has at least 10 years of experience
+            if (value == true && YearsOfExperience < 10)
+            {
+                throw new InvalidOperationException("A mixologist cannot own a uniform unless they have at least 10 years of experience.");
+            }
+            ownsUniform = value;
+        }
+    }
 
-    // MultiValue Attribute
-    public List<string> SignatureDrinks { get; set; } = new List<string>(); // List of signature drinks created by the mixologist
+    // Private backing field for DateHired
+    private DateTime dateHired;
 
-    // Static Attribute
-    public static int TotalMixologists { get; private set; } = 0; // Total number of Mixologists
-
-    // Class Extent
-    private static List<Mixologist> Mixologists = new List<Mixologist>(); // Stores all Mixologist instances
-
-    // Complex Attribute
-    public DateTime DateHired { get; set; } // Date the mixologist was hired
+    // Complex Attribute with validation
+    public DateTime DateHired
+    {
+        get { return dateHired; }
+        private set
+        {
+            if (value > DateTime.Now)
+            {
+                throw new ArgumentException("DateHired cannot be in the future.");
+            }
+            dateHired = value;
+        }
+    }
 
     // Derived Attribute
     public int YearsOfExperience
@@ -40,26 +55,35 @@ public class Mixologist
         get { return DateTime.Now.Year - DateHired.Year; } // Calculate years of experience
     }
 
+    // Static Attribute
+    public static int TotalMixologists { get; private set; } = 0; // Total number of Mixologists
+
+    // Class Extent
+    private static List<Mixologist> Mixologists = new List<Mixologist>(); // Stores all Mixologist instances
+
     // Constructor
-    public Mixologist(bool ownsUniform, string certification, DateTime dateHired)
+    public Mixologist(DateTime dateHired, bool ownsUniform = false)
     {
-        OwnsUniform = ownsUniform;
-        Certification = certification;
-        DateHired = dateHired;
+        DateHired = dateHired;      // Validate and set DateHired
+        OwnsUniform = ownsUniform; // Validate and set OwnsUniform
 
         // Increment static count and add to class extent
         TotalMixologists++;
         Mixologists.Add(this);
     }
 
+    // Method to update OwnsUniform
+    public void UpdateOwnsUniform(bool ownsUniform)
+    {
+        OwnsUniform = ownsUniform; // Revalidate and set OwnsUniform
+    }
+
     // Method to display mixologist information
     public void DisplayMixologistInfo()
     {
-        Console.WriteLine($"Owns Uniform: {(OwnsUniform ? "Yes" : "No")}");
-        Console.WriteLine($"Certification: {Certification ?? "None"}"); // Handles optional certification
         Console.WriteLine($"Date Hired: {DateHired:yyyy-MM-dd}");
         Console.WriteLine($"Years of Experience: {YearsOfExperience}");
-        Console.WriteLine("Signature Drinks: " + (SignatureDrinks.Count > 0 ? string.Join(", ", SignatureDrinks) : "None"));
+        Console.WriteLine($"Owns Uniform: {(OwnsUniform ? "Yes" : "No")}");
     }
 
     // Static Method to Display All Mixologists
@@ -109,3 +133,4 @@ public class Mixologist
         }
     }
 }
+

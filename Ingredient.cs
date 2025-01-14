@@ -6,8 +6,6 @@
 *  \copyright Polish and Japanies Information Technology 
 */
 
-using System;
-using System.Collections.Generic;
 
 using System;
 using System.Collections.Generic;
@@ -16,108 +14,74 @@ using System.Xml.Serialization;
 
 public class Ingredient
 {
-    // Basic Attribute
-    public string Type { get; set; } // The type of ingredient (e.g., "Spice", "Vegetable")
+    private string type;
+    private string country;
+    private decimal price;
 
-    // MultiValue Attribute
-    private List<string> countryOfOrigin = new List<string>();
-    public List<string> CountryOfOrigin
+    private static int totalIngredients = 0;
+    private static List<Ingredient> ingredientsExtent = new List<Ingredient>();
+
+    public string Type => type;
+    public string Country => country;
+    public decimal Price => price;
+
+    public static int TotalIngredients => totalIngredients;
+
+    // Derived attribute (average price doesn't make much sense if we only have one price per object,
+    // but leaving here as a placeholder or example).
+    public decimal AveragePrice => price;
+
+    public Ingredient(string type, string country, decimal price)
     {
-        get => countryOfOrigin;
-        set
+        if (string.IsNullOrWhiteSpace(type))
+            throw new ArgumentException("Type cannot be null or empty.");
+
+        if (string.IsNullOrWhiteSpace(country))
+            throw new ArgumentException("Country cannot be null or empty.");
+
+        // Count how many times this country is already used
+        int existingCountryCount = 0;
+        foreach (var ingr in ingredientsExtent)
         {
-            if (value.Count < 1 || value.Count > 3)
+            if (ingr.country.Equals(country, StringComparison.OrdinalIgnoreCase))
             {
-                throw new ArgumentException("Country of origin must have between 1 and 3 entries.");
+                existingCountryCount++;
             }
-            countryOfOrigin = value;
         }
-    } // List of countries where the ingredient originates (1 to 3)
 
-    // MultiValue Attribute
-    public List<decimal> PriceOnMarket { get; private set; } // List of market prices for the ingredient
-
-    // Optional Attribute
-    public string Supplier { get; set; } // Optional supplier name
-
-    // Static Attribute
-    public static int TotalIngredients { get; private set; } = 0; // Total number of Ingredient instances created
-
-    // Class Extent
-    private static List<Ingredient> Ingredients = new List<Ingredient>(); // Stores all Ingredient instances
-
-    // Complex Attribute
-    public DateTime DateAddedToInventory { get; set; } // The date when the ingredient was added to inventory
-
-    // Derived Attribute
-    public decimal AveragePrice
-    {
-        get
+        // If this country already appears 3 times, throw an exception
+        if (existingCountryCount >= 3)
         {
-            if (PriceOnMarket.Count > 0)
-            {
-                decimal total = 0;
-                foreach (var price in PriceOnMarket)
-                {
-                    total += price;
-                }
-                return total / PriceOnMarket.Count; // Calculate the average price
-            }
-            return 0;
+            throw new ArgumentException($"Cannot add ingredient for country '{country}' more than 3 times.");
         }
+
+        // Otherwise, create the new ingredient
+        this.type = type;
+        this.country = country;
+        this.price = price;
+
+        totalIngredients++;
+        ingredientsExtent.Add(this);
     }
 
-    // Constructor
-    public Ingredient(string type, List<string> countryOfOrigin, List<decimal> priceOnMarket, DateTime dateAddedToInventory, string? supplier = null)
-    {
-        if (countryOfOrigin.Count < 1 || countryOfOrigin.Count > 3)
-        {
-            throw new ArgumentException("Country of origin must have between 1 and 3 entries.");
-        }
-
-        if (priceOnMarket.Count != countryOfOrigin.Count)
-        {
-            throw new ArgumentException("Price on market must have the same number of entries as country of origin.");
-        }
-
-        Type = type;
-        CountryOfOrigin = countryOfOrigin;
-        PriceOnMarket = priceOnMarket;
-        DateAddedToInventory = dateAddedToInventory;
-        Supplier = supplier; // Optional attribute
-
-        // Increment static count and add to class extent
-        TotalIngredients++;
-        Ingredients.Add(this);
-    }
-
-    // Method to display ingredient information
     public void DisplayIngredientInfo()
     {
-        Console.WriteLine($"Ingredient Type: {Type}");
-        Console.WriteLine($"Date Added to Inventory: {DateAddedToInventory:yyyy-MM-dd}");
-        Console.WriteLine($"Supplier: {Supplier ?? "None"}");
-        Console.WriteLine($"Average Price: {AveragePrice:C}");
-        Console.WriteLine("Countries of Origin and Prices:");
-
-        for (int i = 0; i < CountryOfOrigin.Count; i++)
-        {
-            Console.WriteLine($"  - {CountryOfOrigin[i]}: {PriceOnMarket[i]:C}");
-        }
+        Console.WriteLine($"Ingredient Type: {type}");
+        Console.WriteLine($"Country of Origin: {country}");
+        Console.WriteLine($"Price: {price:C}");
+        Console.WriteLine($"Average Price (same as Price): {AveragePrice:C}");
     }
 
-    // Static Method to Display All Ingredients
     public static void DisplayAllIngredients()
     {
         Console.WriteLine("\n--- All Ingredients ---");
-        foreach (var ingredient in Ingredients)
+        foreach (var ing in ingredientsExtent)
         {
-            ingredient.DisplayIngredientInfo();
+            ing.DisplayIngredientInfo();
             Console.WriteLine();
         }
     }
 
-    // Serialization Method
     public static void SaveToFile(string filePath)
     {
         try
@@ -125,7 +89,7 @@ public class Ingredient
             XmlSerializer serializer = new XmlSerializer(typeof(List<Ingredient>));
             using (StreamWriter writer = new StreamWriter(filePath))
             {
-                serializer.Serialize(writer, Ingredients);
+                serializer.Serialize(writer, ingredientsExtent);
             }
             Console.WriteLine("Ingredients saved to file successfully.");
         }
@@ -135,7 +99,6 @@ public class Ingredient
         }
     }
 
-    // Deserialization Method
     public static void LoadFromFile(string filePath)
     {
         try
@@ -143,8 +106,9 @@ public class Ingredient
             XmlSerializer serializer = new XmlSerializer(typeof(List<Ingredient>));
             using (StreamReader reader = new StreamReader(filePath))
             {
-                Ingredients = (List<Ingredient>?)serializer.Deserialize(reader) ?? new List<Ingredient>();
+                ingredientsExtent = (List<Ingredient>)serializer.Deserialize(reader) ?? new List<Ingredient>();
             }
+            totalIngredients = ingredientsExtent.Count;
             Console.WriteLine("Ingredients loaded from file successfully.");
         }
         catch (Exception ex)
@@ -153,4 +117,5 @@ public class Ingredient
         }
     }
 }
+
 

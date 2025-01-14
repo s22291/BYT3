@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("byt3")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f9cc78f12f4f5733d095e574c36f6f154c4e3870")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e6a86f479acd20b58ce7b381615e4289296162fc")]
 [assembly: System.Reflection.AssemblyProductAttribute("byt3")]
 [assembly: System.Reflection.AssemblyTitleAttribute("byt3")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

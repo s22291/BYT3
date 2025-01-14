@@ -11,16 +11,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+
 public class Dishwasher
 {
-    // Basic Attribute
-    public double AvgCleanedDishesPerMinute { get; set; }  // Average number of dishes cleaned per minute
+    // Private backing field for validation
+    private double avgCleanedDishesPerMinute;
+
+    // Public property with validation
+    public double AvgCleanedDishesPerMinute
+    {
+        get { return avgCleanedDishesPerMinute; }
+        private set
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentException("Average cleaned dishes per minute must be greater than zero.");
+            }
+            avgCleanedDishesPerMinute = value;
+        }
+    }
 
     // Optional Attribute
-    public DateTime? ReprimandFromCooksDate { get; set; }  // Nullable reprimand date
-
-    // MultiValue Attribute
-    public List<string> DishwasherModelsWorkedOn { get; set; } = new List<string>(); // List of dishwasher models worked on
+    public DateTime? ReprimandFromCooksDate { get; private set; } // Nullable reprimand date
 
     // Static Attribute
     public static int TotalDishwashers { get; private set; } = 0; // Total number of Dishwasher instances
@@ -28,16 +40,10 @@ public class Dishwasher
     // Class Extent
     private static List<Dishwasher> Dishwashers = new List<Dishwasher>(); // Stores all Dishwasher objects
 
-    // Derived Attribute
-    public double AverageDishesPerHour
-    {
-        get { return AvgCleanedDishesPerMinute * 60; } // Calculate average dishes cleaned per hour
-    }
-
     // Constructor for initializing without reprimand date
     public Dishwasher(double avgCleanedDishesPerMinute)
     {
-        AvgCleanedDishesPerMinute = avgCleanedDishesPerMinute;
+        AvgCleanedDishesPerMinute = avgCleanedDishesPerMinute; // Validation happens here
         ReprimandFromCooksDate = null;
 
         // Increment static count and add to class extent
@@ -52,13 +58,23 @@ public class Dishwasher
         ReprimandFromCooksDate = reprimandFromCooksDate;
     }
 
+    // Method to update AvgCleanedDishesPerMinute
+    public void UpdateAvgCleanedDishesPerMinute(double newAvg)
+    {
+        AvgCleanedDishesPerMinute = newAvg; // Validation happens in the setter
+    }
+
+    // Method to update ReprimandFromCooksDate
+    public void UpdateReprimandFromCooksDate(DateTime? newDate)
+    {
+        ReprimandFromCooksDate = newDate; // No validation needed for nullable date
+    }
+
     // Method to display dishwasher information
     public void DisplayDishwasherInfo()
     {
         Console.WriteLine($"Average Cleaned Dishes Per Minute: {AvgCleanedDishesPerMinute}");
-        Console.WriteLine($"Average Cleaned Dishes Per Hour: {AverageDishesPerHour}");
         Console.WriteLine($"Reprimand From Cooks Date: {ReprimandFromCooksDate?.ToString("d") ?? "None"}");
-        Console.WriteLine("Dishwasher Models Worked On: " + (DishwasherModelsWorkedOn.Count > 0 ? string.Join(", ", DishwasherModelsWorkedOn) : "None"));
     }
 
     // Static Method to Display All Dishwashers

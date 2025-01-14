@@ -8,55 +8,55 @@
 
 using System;
 using System.Collections.Generic;
-
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
 public class FavoriteEquipment
 {
-    // Basic Attribute
-    public string KnifeSize { get; set; } // Preferred knife size (e.g., "6\"", "8\"", "10\"")
+    // Enum for Knife Sizes
+    public enum KnifeSizeType
+    {
+        SixInch,   // 6"
+        EightInch, // 8"
+        TenInch    // 10"
+    }
 
-    // Optional Attribute
-    public string CuttingBoardMaterial { get; set; } // Nullable cutting board material to make it optional
+    // Enum for Cutting Board Materials
+    public enum CuttingBoardMaterialType
+    {
+        Plastic,
+        Wooden,
+        Glass
+    }
 
-    // MultiValue Attribute
-    public List<string> FavoriteBrands { get; set; } = new List<string>(); // List of preferred equipment brands
+    // Basic Attribute (now strictly required)
+    public KnifeSizeType KnifeSize { get; private set; }
 
-    // Static Attribute
-    public static int TotalFavoriteEquipments { get; private set; } = 0; // Total number of FavoriteEquipment objects created
+    // Cutting board is no longer optional
+    public CuttingBoardMaterialType CuttingBoardMaterial { get; private set; }
+
+    // Private static counter (no longer accessible publicly)
+    private static int TotalFavoriteEquipments = 0;
 
     // Class Extent
-    private static List<FavoriteEquipment> Equipments = new List<FavoriteEquipment>(); // Stores all FavoriteEquipment instances
-
-    // Complex Attribute
-    public DateTime LastUpdated { get; set; } // Date the equipment preference was last updated
+    private static List<FavoriteEquipment> Equipments = new List<FavoriteEquipment>();
 
     // Derived Attribute
     public string EquipmentDescription
     {
         get
         {
-            return $"{KnifeSize} knife with a {CuttingBoardMaterial?.ToLower() ?? "no"} cutting board"; // A readable description of the equipment
+            return $"{KnifeSize} knife with a {CuttingBoardMaterial.ToString().ToLower()} cutting board";
         }
     }
 
-    // Constructor
-    public FavoriteEquipment(string knifeSize, string cuttingBoardMaterial, DateTime lastUpdated)
+    // Simplified Constructor (no optional parameter)
+    public FavoriteEquipment(KnifeSizeType knifeSize, CuttingBoardMaterialType cuttingBoardMaterial)
     {
-        // Validate knife size
-        if (knifeSize != "6\"" && knifeSize != "8\"" && knifeSize != "10\"")
-        {
-            throw new ArgumentException("Invalid knife size. Choose '6\"', '8\"', or '10\"'.");
-        }
-
         KnifeSize = knifeSize;
-        CuttingBoardMaterial = cuttingBoardMaterial; // Cutting board material is optional
-        LastUpdated = lastUpdated;
+        CuttingBoardMaterial = cuttingBoardMaterial;
 
-        // Increment static count and add to class extent
+        // Increment private static count and add to extent
         TotalFavoriteEquipments++;
         Equipments.Add(this);
     }
@@ -65,10 +65,8 @@ public class FavoriteEquipment
     public void DisplayEquipmentInfo()
     {
         Console.WriteLine($"Knife Size: {KnifeSize}");
-        Console.WriteLine($"Cutting Board Material: {CuttingBoardMaterial ?? "None"}"); // Handles the optional attribute
-        Console.WriteLine($"Last Updated: {LastUpdated:yyyy-MM-dd}");
+        Console.WriteLine($"Cutting Board Material: {CuttingBoardMaterial}");
         Console.WriteLine($"Equipment Description: {EquipmentDescription}");
-        Console.WriteLine("Favorite Brands: " + (FavoriteBrands.Count > 0 ? string.Join(", ", FavoriteBrands) : "None"));
     }
 
     // Static Method to Display All FavoriteEquipment Objects
@@ -108,7 +106,8 @@ public class FavoriteEquipment
             XmlSerializer serializer = new XmlSerializer(typeof(List<FavoriteEquipment>));
             using (StreamReader reader = new StreamReader(filePath))
             {
-                Equipments = (List<FavoriteEquipment>?)serializer.Deserialize(reader) ?? new List<FavoriteEquipment>();
+                Equipments = (List<FavoriteEquipment>?)serializer.Deserialize(reader) 
+                             ?? new List<FavoriteEquipment>();
             }
             Console.WriteLine("FavoriteEquipment loaded from file successfully.");
         }
