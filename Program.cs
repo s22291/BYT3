@@ -30,10 +30,11 @@ class Program
             Employee.SaveToFile(filePath);
         }
             Employee.LoadFromFile(filePath);
+            //Test for empty variables
             // var employee3 = new Employee("Juan", " ", 50000, 5);
             Employee.DisplayAllEmployees();
-            // Employee.SaveToFile(filePath);
-
+            Employee.SaveToFile(filePath);
+          
 
 
         //For Cooks Objects
@@ -49,6 +50,17 @@ class Program
         // }
         //     Cook.LoadFromFile(filePath);
         //     Cook.DisplayAllCooks();
+
+
+
+            //Ingredient object Protection for more than 3 ingredients of the same country
+            // var ingredient1 = new Ingredient("Spice", "Egypt", 2.5m);
+            // var ingredient2 = new Ingredient("Herb", "Egypt", 1.2m);
+            // var ingredient3 = new Ingredient("Vegetable", "Egypt", 3.0m);
+            // var ingredient4 = new Ingredient("Fruit", "Egypt", 1.5m);
+
+            // Ingredient.DisplayAllIngredients();
+
     }
 }
 
