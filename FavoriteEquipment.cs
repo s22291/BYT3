@@ -13,15 +13,16 @@ using System.Xml.Serialization;
 
 public class FavoriteEquipment
 {
-    // Enum for Knife Sizes
+    // -----------------------------------------------------
+    // Enums (unchanged)
+    // -----------------------------------------------------
     public enum KnifeSizeType
     {
-        SixInch,   // 6"
-        EightInch, // 8"
-        TenInch    // 10"
+        SixInch,
+        EightInch,
+        TenInch
     }
 
-    // Enum for Cutting Board Materials
     public enum CuttingBoardMaterialType
     {
         Plastic,
@@ -29,19 +30,38 @@ public class FavoriteEquipment
         Glass
     }
 
-    // Basic Attribute (now strictly required)
-    public KnifeSizeType KnifeSize { get; private set; }
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
+    private KnifeSizeType knifeSize;
+    private CuttingBoardMaterialType cuttingBoardMaterial;
 
-    // Cutting board is no longer optional
-    public CuttingBoardMaterialType CuttingBoardMaterial { get; private set; }
+    // -----------------------------------------------------
+    // Original properties with private setters.
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to use these private setters directly.
+    // -----------------------------------------------------
 
-    // Private static counter (no longer accessible publicly)
-    private static int TotalFavoriteEquipments = 0;
+    [XmlIgnore]
+    public KnifeSizeType KnifeSize
+    {
+        get => knifeSize;
+        private set => knifeSize = value; 
+    }
 
-    // Class Extent
-    private static List<FavoriteEquipment> Equipments = new List<FavoriteEquipment>();
+    [XmlIgnore]
+    public CuttingBoardMaterialType CuttingBoardMaterial
+    {
+        get => cuttingBoardMaterial;
+        private set => cuttingBoardMaterial = value;
+    }
 
-    // Derived Attribute
+    // -----------------------------------------------------
+    // Derived attribute
+    // We typically mark derived properties [XmlIgnore]
+    // (unless we want to serialize them too).
+    // -----------------------------------------------------
+    [XmlIgnore]
     public string EquipmentDescription
     {
         get
@@ -50,18 +70,61 @@ public class FavoriteEquipment
         }
     }
 
-    // Simplified Constructor (no optional parameter)
+    // -----------------------------------------------------
+    // Bridge properties for XML Serialization.
+    // They have public setters so the serializer can set them.
+    // They point to the same backing fields but call your
+    // existing property logic (within this class).
+    // -----------------------------------------------------
+
+    [XmlElement("KnifeSize")]
+    public KnifeSizeType KnifeSizeForXml
+    {
+        get => knifeSize;
+        set => KnifeSize = value;  // calls the private setter
+    }
+
+    [XmlElement("CuttingBoardMaterial")]
+    public CuttingBoardMaterialType CuttingBoardMaterialForXml
+    {
+        get => cuttingBoardMaterial;
+        set => CuttingBoardMaterial = value;  // calls the private setter
+    }
+
+    // -----------------------------------------------------
+    // Private static counter (remains private)
+    // Class extent
+    // -----------------------------------------------------
+    private static int TotalFavoriteEquipments = 0;
+    private static List<FavoriteEquipment> Equipments = new List<FavoriteEquipment>();
+
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't break anything.
+    // DO NOT increment the static counter here.
+    // -----------------------------------------------------
+    public FavoriteEquipment()
+    {
+        // Provide defaults (choose any valid enum members)
+        knifeSize = KnifeSizeType.SixInch;
+        cuttingBoardMaterial = CuttingBoardMaterialType.Plastic;
+    }
+
+    // -----------------------------------------------------
+    // Simplified Constructor (no optional params in your code)
+    // -----------------------------------------------------
     public FavoriteEquipment(KnifeSizeType knifeSize, CuttingBoardMaterialType cuttingBoardMaterial)
     {
-        KnifeSize = knifeSize;
-        CuttingBoardMaterial = cuttingBoardMaterial;
+        KnifeSize = knifeSize;  // private setter
+        CuttingBoardMaterial = cuttingBoardMaterial; // private setter
 
-        // Increment private static count and add to extent
         TotalFavoriteEquipments++;
         Equipments.Add(this);
     }
 
+    // -----------------------------------------------------
     // Method to display favorite equipment information
+    // -----------------------------------------------------
     public void DisplayEquipmentInfo()
     {
         Console.WriteLine($"Knife Size: {KnifeSize}");
@@ -69,7 +132,9 @@ public class FavoriteEquipment
         Console.WriteLine($"Equipment Description: {EquipmentDescription}");
     }
 
-    // Static Method to Display All FavoriteEquipment Objects
+    // -----------------------------------------------------
+    // Static Method to display all equipment
+    // -----------------------------------------------------
     public static void DisplayAllEquipments()
     {
         Console.WriteLine("\n--- All Favorite Equipment ---");
@@ -80,7 +145,9 @@ public class FavoriteEquipment
         }
     }
 
-    // Serialization Method
+    // -----------------------------------------------------
+    // Serialization / Deserialization
+    // -----------------------------------------------------
     public static void SaveToFile(string filePath)
     {
         try
@@ -98,7 +165,6 @@ public class FavoriteEquipment
         }
     }
 
-    // Deserialization Method
     public static void LoadFromFile(string filePath)
     {
         try
@@ -106,7 +172,7 @@ public class FavoriteEquipment
             XmlSerializer serializer = new XmlSerializer(typeof(List<FavoriteEquipment>));
             using (StreamReader reader = new StreamReader(filePath))
             {
-                Equipments = (List<FavoriteEquipment>?)serializer.Deserialize(reader) 
+                Equipments = (List<FavoriteEquipment>?)serializer.Deserialize(reader)
                              ?? new List<FavoriteEquipment>();
             }
             Console.WriteLine("FavoriteEquipment loaded from file successfully.");

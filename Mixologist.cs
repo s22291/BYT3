@@ -11,20 +11,31 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-
 public class Mixologist
 {
-    // Private backing field for OwnsUniform
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
     private bool ownsUniform;
+    private DateTime dateHired;
 
-    // Basic Attribute with validation
+    // -----------------------------------------------------
+    // Original properties (private setters).
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to access the private setters directly.
+    // -----------------------------------------------------
+
+    [XmlIgnore]
     public bool OwnsUniform
     {
         get { return ownsUniform; }
         private set
         {
             // Validate that the mixologist has at least 10 years of experience
-            if (value == true && YearsOfExperience < 10)
+            // *We calculate "YearsOfExperience" from "dateHired" below.
+            // *Careful: If dateHired is default(DateTime), this might matter,
+            //  so see how you handle that in the parameterless constructor.
+            if (value && YearsOfExperience < 10)
             {
                 throw new InvalidOperationException("A mixologist cannot own a uniform unless they have at least 10 years of experience.");
             }
@@ -32,10 +43,7 @@ public class Mixologist
         }
     }
 
-    // Private backing field for DateHired
-    private DateTime dateHired;
-
-    // Complex Attribute with validation
+    [XmlIgnore]
     public DateTime DateHired
     {
         get { return dateHired; }
@@ -49,36 +57,80 @@ public class Mixologist
         }
     }
 
+    // -----------------------------------------------------
     // Derived Attribute
+    // Typically, derived attributes have no setter, so
+    // we can mark them [XmlIgnore] if you don't want them
+    // serialized or if the serializer would break them.
+    // -----------------------------------------------------
+    [XmlIgnore]
     public int YearsOfExperience
     {
-        get { return DateTime.Now.Year - DateHired.Year; } // Calculate years of experience
+        get { return DateTime.Now.Year - DateHired.Year; }
     }
 
-    // Static Attribute
-    public static int TotalMixologists { get; private set; } = 0; // Total number of Mixologists
+    // -----------------------------------------------------
+    // Bridge properties for XML Serialization.
+    // They have public setters so the serializer can set them.
+    // They point to the same private fields but call your
+    // existing property logic for validation.
+    // -----------------------------------------------------
 
-    // Class Extent
-    private static List<Mixologist> Mixologists = new List<Mixologist>(); // Stores all Mixologist instances
+    [XmlElement("OwnsUniform")]
+    public bool OwnsUniformForXml
+    {
+        get => ownsUniform;
+        set => OwnsUniform = value;  // calls the private setter logic
+    }
 
-    // Constructor
+    [XmlElement("DateHired")]
+    public DateTime DateHiredForXml
+    {
+        get => dateHired;
+        set => DateHired = value;    // calls the private setter logic
+    }
+
+    // -----------------------------------------------------
+    // Static attribute & class extent
+    // -----------------------------------------------------
+    public static int TotalMixologists { get; private set; } = 0;
+
+    private static List<Mixologist> Mixologists = new List<Mixologist>();
+
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't break validation.
+    // Be careful with the uniform validation, since setting
+    // ownsUniform = true might throw if dateHired isn't old enough.
+    // DO NOT increment static count here (avoid double-counting).
+    // -----------------------------------------------------
+    public Mixologist()
+    {
+        // Provide defaults:
+        dateHired = DateTime.Now.AddYears(-10); // so it doesn't fail if OwnsUniform is set to true
+        ownsUniform = false;
+    }
+
+    // -----------------------------------------------------
+    // Main Constructor
+    // -----------------------------------------------------
     public Mixologist(DateTime dateHired, bool ownsUniform = false)
     {
-        DateHired = dateHired;      // Validate and set DateHired
-        OwnsUniform = ownsUniform; // Validate and set OwnsUniform
+        DateHired = dateHired;   // validates
+        OwnsUniform = ownsUniform; // validates
 
-        // Increment static count and add to class extent
         TotalMixologists++;
         Mixologists.Add(this);
     }
 
-    // Method to update OwnsUniform
+    // -----------------------------------------------------
+    // Methods
+    // -----------------------------------------------------
     public void UpdateOwnsUniform(bool ownsUniform)
     {
-        OwnsUniform = ownsUniform; // Revalidate and set OwnsUniform
+        OwnsUniform = ownsUniform; // re-validate
     }
 
-    // Method to display mixologist information
     public void DisplayMixologistInfo()
     {
         Console.WriteLine($"Date Hired: {DateHired:yyyy-MM-dd}");
@@ -86,7 +138,9 @@ public class Mixologist
         Console.WriteLine($"Owns Uniform: {(OwnsUniform ? "Yes" : "No")}");
     }
 
-    // Static Method to Display All Mixologists
+    // -----------------------------------------------------
+    // Static Methods
+    // -----------------------------------------------------
     public static void DisplayAllMixologists()
     {
         Console.WriteLine("\n--- All Mixologists ---");
@@ -97,7 +151,6 @@ public class Mixologist
         }
     }
 
-    // Serialization Method
     public static void SaveToFile(string filePath)
     {
         try
@@ -115,7 +168,6 @@ public class Mixologist
         }
     }
 
-    // Deserialization Method
     public static void LoadFromFile(string filePath)
     {
         try
@@ -133,4 +185,3 @@ public class Mixologist
         }
     }
 }
-

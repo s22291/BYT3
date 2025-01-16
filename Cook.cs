@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+
+
 public class Cook
 {
     // Enum for allowed roles
@@ -22,21 +24,34 @@ public class Cook
         LineCook
     }
 
-    // Basic Attribute
+    // --------------------------------------------------
+    // 1) Private backing fields for all the properties.
+    // --------------------------------------------------
     private RoleType role;
+    private bool? ownsUniform;
+    private string favoriteRecipe;
 
+    // --------------------------------------------------
+    // Original properties (private setters, protected).
+    // We mark them [XmlIgnore] so the serializer DOES NOT
+    // complain about the private setter.
+    // --------------------------------------------------
+
+    [XmlIgnore]
     public RoleType Role
     {
         get { return role; }
         private set { role = value; }
     }
 
-    // Optional Attribute
-    public bool? OwnsUniform { get; set; }
+    [XmlIgnore]
+    public bool? OwnsUniform
+    {
+        get { return ownsUniform; }
+        private set { ownsUniform = value; }
+    }
 
-    // Private backing field for FavoriteRecipe
-    private string favoriteRecipe;
-
+    [XmlIgnore]
     public string FavoriteRecipe
     {
         get { return favoriteRecipe; }
@@ -54,13 +69,62 @@ public class Cook
         }
     }
 
-    // Private field to track total cooks (no public getter or setter)
-    private static int totalCooks = 0;
+    // --------------------------------------------------
+    // Bridge properties for XML serialization:
+    //  - These are public, so the serializer is happy.
+    //  - They read/write the same backing fields.
+    // --------------------------------------------------
 
-    // Class Extent
+    [XmlElement("Role")]
+    public RoleType RoleForXml
+    {
+        get => role;
+        set => role = value;  // Set the same backing field
+    }
+
+    [XmlElement("OwnsUniform")]
+    public bool? OwnsUniformForXml
+    {
+        get => ownsUniform;
+        set => ownsUniform = value;  // Set the same backing field
+    }
+
+    [XmlElement("FavoriteRecipe")]
+    public string FavoriteRecipeForXml
+    {
+        get => favoriteRecipe;
+        set
+        {
+            // Reuse the logic from the main property if you want to keep
+            // the same "Unavailable" default for empty strings:
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                favoriteRecipe = "Unavailable";
+            }
+            else
+            {
+                favoriteRecipe = value;
+            }
+        }
+    }
+
+    // --------------------------------------------------
+    // Private static field to track total cooks
+    // Class Extent (List of all cooks)
+    // --------------------------------------------------
+    private static int totalCooks = 0;
     private static List<Cook> Cooks = new List<Cook>();
 
-    // Constructor for when FavoriteRecipe is provided
+    // Parameterless Constructor (Required for Serialization)
+    public Cook()
+    {
+        // Default values for deserialization
+        Role = RoleType.LineCook;
+        OwnsUniform = null;
+        FavoriteRecipe = "Unavailable";
+    }
+
+    // Main Constructor
     public Cook(RoleType role, bool? ownsUniform, string favoriteRecipe)
     {
         Role = role;
@@ -74,25 +138,13 @@ public class Cook
         Cooks.Add(this);
     }
 
-    // Overloaded constructor for when FavoriteRecipe is NOT provided
+    // Overloaded Constructor (Without Favorite Recipe)
     public Cook(RoleType role, bool? ownsUniform)
-        : this(role, ownsUniform, "Unavailable") // Calls the main constructor with "Unavailable" as the default
+        : this(role, ownsUniform, "Unavailable") // Default to "Unavailable" for FavoriteRecipe
     {
     }
 
-    // Method to update Role
-    public void UpdateRole(RoleType newRole)
-    {
-        Role = newRole;
-    }
-
-    // Method to update FavoriteRecipe
-    public void UpdateFavoriteRecipe(string newFavoriteRecipe)
-    {
-        FavoriteRecipe = newFavoriteRecipe; // Validation happens in the setter
-    }
-
-    // Method to display cook information
+    // Method to Display Cook Information
     public void DisplayCookInfo()
     {
         Console.WriteLine($"Role: {Role}");
@@ -111,13 +163,7 @@ public class Cook
         }
 
         // Display the total number of cooks
-        Console.WriteLine($"Total Cooks: {GetTotalCooks()}");
-    }
-
-    // Private Method to Get Total Cooks
-    private static int GetTotalCooks()
-    {
-        return totalCooks;
+        Console.WriteLine($"Total Cooks: {totalCooks}");
     }
 
     // Serialization Method
@@ -146,8 +192,14 @@ public class Cook
             XmlSerializer serializer = new XmlSerializer(typeof(List<Cook>));
             using (StreamReader reader = new StreamReader(filePath))
             {
-                Cooks = (List<Cook>?)serializer.Deserialize(reader) ?? new List<Cook>();
-                totalCooks = Cooks.Count; // Update the counter after loading
+                var deserializedCooks = (List<Cook>?)serializer.Deserialize(reader) ?? new List<Cook>();
+
+                // Clear existing data
+                Cooks.Clear();
+                Cooks.AddRange(deserializedCooks);
+
+                // Update the counter
+                totalCooks = Cooks.Count;
             }
             Console.WriteLine("Cooks loaded from file successfully.");
         }
@@ -157,3 +209,4 @@ public class Cook
         }
     }
 }
+

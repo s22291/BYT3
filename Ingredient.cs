@@ -14,61 +14,153 @@ using System.Xml.Serialization;
 
 public class Ingredient
 {
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
     private string type;
     private string country;
     private decimal price;
 
+    // -----------------------------------------------------
+    // Class extent & static counter
+    // -----------------------------------------------------
     private static int totalIngredients = 0;
     private static List<Ingredient> ingredientsExtent = new List<Ingredient>();
 
-    public string Type => type;
-    public string Country => country;
-    public decimal Price => price;
+    // -----------------------------------------------------
+    // Original properties (private setters).
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to call these private setters directly.
+    // -----------------------------------------------------
 
-    public static int TotalIngredients => totalIngredients;
+    [XmlIgnore]
+    public string Type
+    {
+        get => type;
+        private set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Type cannot be null or empty.");
+            type = value;
+        }
+    }
 
-    // Derived attribute (average price doesn't make much sense if we only have one price per object,
-    // but leaving here as a placeholder or example).
+    [XmlIgnore]
+    public string Country
+    {
+        get => country;
+        private set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                throw new ArgumentException("Country cannot be null or empty.");
+
+            // Count how many times this country is already used
+            int existingCountryCount = 0;
+            foreach (var ingr in ingredientsExtent)
+            {
+                if (ingr.country.Equals(value, StringComparison.OrdinalIgnoreCase))
+                {
+                    existingCountryCount++;
+                }
+            }
+
+            // If this country already appears 3 times, throw an exception
+            if (existingCountryCount >= 3)
+            {
+                throw new ArgumentException($"Cannot add ingredient for country '{value}' more than 3 times.");
+            }
+
+            country = value;
+        }
+    }
+
+    [XmlIgnore]
+    public decimal Price
+    {
+        get => price;
+        private set
+        {
+            // Additional validation if desired, e.g. non-negative
+            price = value;
+        }
+    }
+
+    // -----------------------------------------------------
+    // Derived attribute
+    // We typically mark it [XmlIgnore] (no setter).
+    // -----------------------------------------------------
+    [XmlIgnore]
     public decimal AveragePrice => price;
 
+    // -----------------------------------------------------
+    // Public read-only static property & extent access
+    // -----------------------------------------------------
+    public static int TotalIngredients => totalIngredients;
+
+    // -----------------------------------------------------
+    // Bridge properties for XML serialization.
+    // They have public getters/setters so the serializer
+    // can set them. They point to the private-set original
+    // properties, preserving your validation logic.
+    // -----------------------------------------------------
+
+    [XmlElement("Type")]
+    public string TypeForXml
+    {
+        get => type;
+        set => Type = value; // Calls the private setter
+    }
+
+    [XmlElement("Country")]
+    public string CountryForXml
+    {
+        get => country;
+        set => Country = value; // Calls the private setter
+    }
+
+    [XmlElement("Price")]
+    public decimal PriceForXml
+    {
+        get => price;
+        set => Price = value;   // Calls the private setter
+    }
+
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't violate validation.
+    // Do NOT increment totalIngredients here — prevents
+    // double-counting on deserialization.
+    // -----------------------------------------------------
+    public Ingredient()
+    {
+        // Safe defaults that won't fail validation checks
+        type = "GenericIngredient";
+        country = "GenericCountry";
+        price = 1m;  // or any acceptable default
+    }
+
+    // -----------------------------------------------------
+    // Main constructor with validation
+    // -----------------------------------------------------
     public Ingredient(string type, string country, decimal price)
     {
-        if (string.IsNullOrWhiteSpace(type))
-            throw new ArgumentException("Type cannot be null or empty.");
-
-        if (string.IsNullOrWhiteSpace(country))
-            throw new ArgumentException("Country cannot be null or empty.");
-
-        // Count how many times this country is already used
-        int existingCountryCount = 0;
-        foreach (var ingr in ingredientsExtent)
-        {
-            if (ingr.country.Equals(country, StringComparison.OrdinalIgnoreCase))
-            {
-                existingCountryCount++;
-            }
-        }
-
-        // If this country already appears 3 times, throw an exception
-        if (existingCountryCount >= 3)
-        {
-            throw new ArgumentException($"Cannot add ingredient for country '{country}' more than 3 times.");
-        }
-
-        // Otherwise, create the new ingredient
-        this.type = type;
-        this.country = country;
-        this.price = price;
+        // This will trigger the logic in the private setters (via the public properties).
+        Type = type;
+        Country = country;
+        Price = price;
 
         totalIngredients++;
         ingredientsExtent.Add(this);
     }
 
+    // -----------------------------------------------------
+    // Methods
+    // -----------------------------------------------------
     public void DisplayIngredientInfo()
     {
-        Console.WriteLine($"Ingredient Type: {type}");
-        Console.WriteLine($"Country of Origin: {country}");
-        Console.WriteLine($"Price: {price:C}");
+        Console.WriteLine($"Ingredient Type: {Type}");
+        Console.WriteLine($"Country of Origin: {Country}");
+        Console.WriteLine($"Price: {Price:C}");
         Console.WriteLine($"Average Price (same as Price): {AveragePrice:C}");
     }
 
@@ -82,6 +174,9 @@ public class Ingredient
         }
     }
 
+    // -----------------------------------------------------
+    // Serialization
+    // -----------------------------------------------------
     public static void SaveToFile(string filePath)
     {
         try
@@ -99,6 +194,9 @@ public class Ingredient
         }
     }
 
+    // -----------------------------------------------------
+    // Deserialization
+    // -----------------------------------------------------
     public static void LoadFromFile(string filePath)
     {
         try
@@ -106,8 +204,10 @@ public class Ingredient
             XmlSerializer serializer = new XmlSerializer(typeof(List<Ingredient>));
             using (StreamReader reader = new StreamReader(filePath))
             {
-                ingredientsExtent = (List<Ingredient>)serializer.Deserialize(reader) ?? new List<Ingredient>();
+                ingredientsExtent = (List<Ingredient>?)serializer.Deserialize(reader) 
+                                    ?? new List<Ingredient>();
             }
+            // Update the static counter to match the new list size
             totalIngredients = ingredientsExtent.Count;
             Console.WriteLine("Ingredients loaded from file successfully.");
         }
@@ -117,5 +217,6 @@ public class Ingredient
         }
     }
 }
+
 
 

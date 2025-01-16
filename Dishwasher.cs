@@ -11,73 +11,123 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-
 public class Dishwasher
 {
-    // Private backing field for validation
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
     private double avgCleanedDishesPerMinute;
+    private DateTime? reprimandFromCooksDate;
 
-    // Public property with validation
+    // -----------------------------------------------------
+    // Original properties (private setters).
+    // Mark them [XmlIgnore], so the serializer won't
+    // try to call these private setters directly.
+    // -----------------------------------------------------
+
+    [XmlIgnore]
     public double AvgCleanedDishesPerMinute
     {
         get { return avgCleanedDishesPerMinute; }
         private set
         {
             if (value <= 0)
-            {
                 throw new ArgumentException("Average cleaned dishes per minute must be greater than zero.");
-            }
             avgCleanedDishesPerMinute = value;
         }
     }
 
-    // Optional Attribute
-    public DateTime? ReprimandFromCooksDate { get; private set; } // Nullable reprimand date
+    [XmlIgnore]
+    public DateTime? ReprimandFromCooksDate
+    {
+        get { return reprimandFromCooksDate; }
+        private set
+        {
+            // No particular validation for nullable
+            reprimandFromCooksDate = value;
+        }
+    }
 
-    // Static Attribute
-    public static int TotalDishwashers { get; private set; } = 0; // Total number of Dishwasher instances
+    // -----------------------------------------------------
+    // Bridge properties for XML Serialization.
+    // They have public setters so the serializer can set them.
+    // They read/write the same private fields through
+    // the original private-set properties (within the same class).
+    // -----------------------------------------------------
 
-    // Class Extent
-    private static List<Dishwasher> Dishwashers = new List<Dishwasher>(); // Stores all Dishwasher objects
+    [XmlElement("AvgCleanedDishesPerMinute")]
+    public double AvgCleanedDishesPerMinuteForXml
+    {
+        get => avgCleanedDishesPerMinute;
+        set => AvgCleanedDishesPerMinute = value; // uses the original property
+    }
 
-    // Constructor for initializing without reprimand date
+    [XmlElement("ReprimandFromCooksDate")]
+    public DateTime? ReprimandFromCooksDateForXml
+    {
+        get => reprimandFromCooksDate;
+        set => ReprimandFromCooksDate = value;    // uses the original property
+    }
+
+    // -----------------------------------------------------
+    // Static attributes & class extent
+    // -----------------------------------------------------
+    public static int TotalDishwashers { get; private set; } = 0; // total number of Dishwasher instances
+
+    private static List<Dishwasher> Dishwashers = new List<Dishwasher>(); // stores all Dishwasher objects
+
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't break validation.
+    // DO NOT increment TotalDishwashers here (avoids double-count).
+    // -----------------------------------------------------
+    public Dishwasher()
+    {
+        // Provide defaults that won't throw an exception
+        avgCleanedDishesPerMinute = 1.0;   // Must be > 0
+        reprimandFromCooksDate = null;
+    }
+
+    // -----------------------------------------------------
+    // Main Constructors
+    // -----------------------------------------------------
     public Dishwasher(double avgCleanedDishesPerMinute)
     {
-        AvgCleanedDishesPerMinute = avgCleanedDishesPerMinute; // Validation happens here
+        AvgCleanedDishesPerMinute = avgCleanedDishesPerMinute;  // validation in setter
         ReprimandFromCooksDate = null;
 
-        // Increment static count and add to class extent
         TotalDishwashers++;
         Dishwashers.Add(this);
     }
 
-    // Constructor for initializing with reprimand date
     public Dishwasher(double avgCleanedDishesPerMinute, DateTime reprimandFromCooksDate)
         : this(avgCleanedDishesPerMinute)
     {
         ReprimandFromCooksDate = reprimandFromCooksDate;
     }
 
-    // Method to update AvgCleanedDishesPerMinute
+    // -----------------------------------------------------
+    // Update Methods
+    // -----------------------------------------------------
     public void UpdateAvgCleanedDishesPerMinute(double newAvg)
     {
-        AvgCleanedDishesPerMinute = newAvg; // Validation happens in the setter
+        AvgCleanedDishesPerMinute = newAvg; // validation in setter
     }
 
-    // Method to update ReprimandFromCooksDate
     public void UpdateReprimandFromCooksDate(DateTime? newDate)
     {
-        ReprimandFromCooksDate = newDate; // No validation needed for nullable date
+        ReprimandFromCooksDate = newDate;   // no validation needed for nullable
     }
 
-    // Method to display dishwasher information
+    // -----------------------------------------------------
+    // Display Methods
+    // -----------------------------------------------------
     public void DisplayDishwasherInfo()
     {
         Console.WriteLine($"Average Cleaned Dishes Per Minute: {AvgCleanedDishesPerMinute}");
         Console.WriteLine($"Reprimand From Cooks Date: {ReprimandFromCooksDate?.ToString("d") ?? "None"}");
     }
 
-    // Static Method to Display All Dishwashers
     public static void DisplayAllDishwashers()
     {
         Console.WriteLine("\n--- All Dishwashers ---");
@@ -88,7 +138,9 @@ public class Dishwasher
         }
     }
 
-    // Serialization Method
+    // -----------------------------------------------------
+    // Serialization / Deserialization
+    // -----------------------------------------------------
     public static void SaveToFile(string filePath)
     {
         try
@@ -106,7 +158,6 @@ public class Dishwasher
         }
     }
 
-    // Deserialization Method
     public static void LoadFromFile(string filePath)
     {
         try

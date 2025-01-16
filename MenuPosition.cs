@@ -11,83 +11,169 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+
+
 public class MenuPosition
 {
-    // Private fields
-    private string name; // Name of the menu item
-    private decimal productionCost; // Production cost of the menu item
-    private decimal sellPrice; // Selling price of the menu item
-    private string temperature; // Temperature category (e.g., "Hot", "Cold")
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
+    private string name;
+    private decimal productionCost;
+    private decimal sellPrice;
+    private string temperature;
 
-    // Public read-only properties
+    // -----------------------------------------------------
+    // Original Properties (private setters).
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to call these private setters directly.
+    // -----------------------------------------------------
+    
+    [XmlIgnore]
     public string Name
     {
-        get { return name; }
+        get => name;
+        private set
+        {
+            // Reuse your Validator logic
+            name = Validator.ValidateNonEmptyString(value, nameof(Name));
+        }
     }
 
+    [XmlIgnore]
     public decimal ProductionCost
     {
-        get { return productionCost; }
+        get => productionCost;
+        private set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException($"{nameof(ProductionCost)} cannot be negative.");
+            }
+            productionCost = value;
+        }
     }
 
+    [XmlIgnore]
     public decimal SellPrice
     {
-        get { return sellPrice; }
+        get => sellPrice;
+        private set
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentException($"{nameof(SellPrice)} must be greater than zero.");
+            }
+            sellPrice = value;
+        }
     }
 
+    [XmlIgnore]
     public string Temperature
     {
-        get { return temperature; }
+        get => temperature;
+        private set
+        {
+            // Reuse your Validator logic
+            temperature = Validator.ValidateNonEmptyString(value, nameof(Temperature));
+        }
     }
 
-    // Static attribute to track total menu positions
-    public static int TotalMenuPositions { get; private set; } = 0;
-
-    // Class extent (list of all menu positions)
-    private static List<MenuPosition> MenuPositions = new List<MenuPosition>();
-
-    // Constant for Desired Profit Margin
-    public const decimal DesiredProfitMargin = 0.09m;
-
+    // -----------------------------------------------------
     // Derived attribute
+    // Typically marked [XmlIgnore] if we don't want to
+    // serialize it or if it has no setter.
+    // -----------------------------------------------------
+    [XmlIgnore]
     public decimal ActualProfitMargin
     {
         get
         {
-            if (sellPrice > 0)
+            if (SellPrice > 0)
             {
-                return (sellPrice - productionCost) / sellPrice;
+                return (SellPrice - ProductionCost) / SellPrice;
             }
-            return 0; // Avoid division by zero
+            return 0;
         }
     }
 
-    // Constructor
+    // -----------------------------------------------------
+    // Constants / Static
+    // -----------------------------------------------------
+    public const decimal DesiredProfitMargin = 0.09m;
+
+    public static int TotalMenuPositions { get; private set; } = 0;
+
+    private static List<MenuPosition> MenuPositions = new List<MenuPosition>();
+
+    // -----------------------------------------------------
+    // Bridge properties for XML serialization.
+    // They have public getters/setters so the serializer
+    // can set them. Inside, they call the original
+    // properties (with private setters), preserving
+    // all validation logic.
+    // -----------------------------------------------------
+    
+    [XmlElement("Name")]
+    public string NameForXml
+    {
+        get => name;
+        set => Name = value; // triggers private validation
+    }
+
+    [XmlElement("ProductionCost")]
+    public decimal ProductionCostForXml
+    {
+        get => productionCost;
+        set => ProductionCost = value; // triggers private validation
+    }
+
+    [XmlElement("SellPrice")]
+    public decimal SellPriceForXml
+    {
+        get => sellPrice;
+        set => SellPrice = value;      // triggers private validation
+    }
+
+    [XmlElement("Temperature")]
+    public string TemperatureForXml
+    {
+        get => temperature;
+        set => Temperature = value;    // triggers private validation
+    }
+
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't fail validation.
+    // Do NOT increment `TotalMenuPositions` here to avoid
+    // double-counting on deserialization.
+    // -----------------------------------------------------
+    public MenuPosition()
+    {
+        // Safe defaults
+        name = "Undefined";
+        productionCost = 0m;
+        sellPrice = 1m;   // Must be > 0
+        temperature = "Cold";
+    }
+
+    // -----------------------------------------------------
+    // Main constructor (original)
+    // -----------------------------------------------------
     public MenuPosition(string name, decimal productionCost, decimal sellPrice, string temperature)
     {
-        // Validate inputs
-        this.name = Validator.ValidateNonEmptyString(name, nameof(Name));
-        this.temperature = Validator.ValidateNonEmptyString(temperature, nameof(Temperature));
+        Name = name;                 // triggers validation
+        ProductionCost = productionCost;
+        SellPrice = sellPrice;
+        Temperature = temperature;
 
-        if (productionCost < 0)
-        {
-            throw new ArgumentException($"{nameof(ProductionCost)} cannot be negative.");
-        }
-
-        if (sellPrice <= 0)
-        {
-            throw new ArgumentException($"{nameof(SellPrice)} must be greater than zero.");
-        }
-
-        this.productionCost = productionCost;
-        this.sellPrice = sellPrice;
-
-        // Increment static count and add to class extent
         TotalMenuPositions++;
         MenuPositions.Add(this);
     }
 
+    // -----------------------------------------------------
     // Method to display menu position information
+    // -----------------------------------------------------
     public void DisplayMenuPositionInfo()
     {
         Console.WriteLine($"Name: {Name}");
@@ -98,7 +184,9 @@ public class MenuPosition
         Console.WriteLine($"Actual Profit Margin: {ActualProfitMargin:P}");
     }
 
-    // Static method to display all menu positions
+    // -----------------------------------------------------
+    // Static methods
+    // -----------------------------------------------------
     public static void DisplayAllMenuPositions()
     {
         Console.WriteLine("\n--- All Menu Positions ---");
@@ -109,7 +197,6 @@ public class MenuPosition
         }
     }
 
-    // Serialization method
     public static void SaveToFile(string filePath)
     {
         try
@@ -127,7 +214,6 @@ public class MenuPosition
         }
     }
 
-    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try
@@ -135,7 +221,8 @@ public class MenuPosition
             XmlSerializer serializer = new XmlSerializer(typeof(List<MenuPosition>));
             using (StreamReader reader = new StreamReader(filePath))
             {
-                MenuPositions = (List<MenuPosition>?)serializer.Deserialize(reader) ?? new List<MenuPosition>();
+                MenuPositions = (List<MenuPosition>?)serializer.Deserialize(reader) 
+                                ?? new List<MenuPosition>();
             }
             Console.WriteLine("Menu positions loaded from file successfully.");
         }

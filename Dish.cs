@@ -11,9 +11,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+
+
 public class Dish
 {
+    // -----------------------------------------------------
     // Enum for Course Type
+    // -----------------------------------------------------
     public enum CourseTypeEnum
     {
         Starter,
@@ -21,47 +25,99 @@ public class Dish
         Dessert
     }
 
-    // Private fields
-    private CourseTypeEnum courseType; // The course type (Starter, Main, Dessert)
-    private string serviceCutleryType; // The type of service cutlery (e.g., Fork, Spoon, Knife)
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
+    private CourseTypeEnum courseType;
+    private string serviceCutleryType;
 
-    // Public read-only properties
+    // -----------------------------------------------------
+    // Original Properties (private setters).
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to call these private setters directly.
+    // -----------------------------------------------------
+
+    [XmlIgnore]
     public CourseTypeEnum CourseType
     {
-        get { return courseType; }
+        get => courseType;
+        private set => courseType = value; 
     }
 
+    [XmlIgnore]
     public string ServiceCutleryType
     {
-        get { return serviceCutleryType; }
+        get => serviceCutleryType;
+        private set
+        {
+            // Reuse your Validator logic
+            serviceCutleryType = Validator.ValidateNonEmptyString(value, nameof(ServiceCutleryType));
+        }
     }
 
-    // Static attribute to count total dishes
-    public static int TotalDishes { get; private set; } = 0;
+    // -----------------------------------------------------
+    // Bridge properties for XML serialization.
+    // They have public getters/setters so the serializer
+    // can set them. They delegate to the original
+    // properties, preserving all validation logic.
+    // -----------------------------------------------------
 
-    // Class extent to store all instances
+    [XmlElement("CourseType")]
+    public CourseTypeEnum CourseTypeForXml
+    {
+        get => courseType;
+        set => CourseType = value;  // triggers the private setter
+    }
+
+    [XmlElement("ServiceCutleryType")]
+    public string ServiceCutleryTypeForXml
+    {
+        get => serviceCutleryType;
+        set => ServiceCutleryType = value; // triggers the private setter
+    }
+
+    // -----------------------------------------------------
+    // Static attribute & class extent
+    // -----------------------------------------------------
+    public static int TotalDishes { get; private set; } = 0;
     private static List<Dish> Dishes = new List<Dish>();
 
-    // Constructor
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't break logic.
+    // Do NOT increment TotalDishes here (avoid double-count).
+    // -----------------------------------------------------
+    public Dish()
+    {
+        // Safe defaults
+        courseType = CourseTypeEnum.Main;
+        serviceCutleryType = "Fork";
+    }
+
+    // -----------------------------------------------------
+    // Main constructor
+    // -----------------------------------------------------
     public Dish(CourseTypeEnum courseType, string serviceCutleryType)
     {
-        // Validate inputs
-        this.courseType = courseType; // Enum ensures only valid CourseType values are used
-        this.serviceCutleryType = Validator.ValidateNonEmptyString(serviceCutleryType, nameof(ServiceCutleryType));
+        CourseType = courseType;  // calls private setter
+        ServiceCutleryType = serviceCutleryType; // calls private setter
 
-        // Increment static count and add to class extent
         TotalDishes++;
         Dishes.Add(this);
     }
 
+    // -----------------------------------------------------
     // Method to display dish information
+    // -----------------------------------------------------
     public void DisplayDishInfo()
     {
         Console.WriteLine($"Course Type: {CourseType}");
         Console.WriteLine($"Service Cutlery Type: {ServiceCutleryType}");
     }
 
+    // -----------------------------------------------------
     // Static method to display all dishes
+    // -----------------------------------------------------
     public static void DisplayAllDishes()
     {
         Console.WriteLine("\n--- All Dishes ---");
@@ -72,7 +128,9 @@ public class Dish
         }
     }
 
-    // Serialization method
+    // -----------------------------------------------------
+    // Serialization / Deserialization
+    // -----------------------------------------------------
     public static void SaveToFile(string filePath)
     {
         try
@@ -90,7 +148,6 @@ public class Dish
         }
     }
 
-    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try

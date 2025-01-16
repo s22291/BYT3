@@ -12,73 +12,147 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
+
 public class Seating
 {
-    // Enum for seating types
+    // -----------------------------------------------------
+    // Enum for seating types (unchanged)
+    // -----------------------------------------------------
     public enum SeatingTypeEnum
     {
         CounterSeating,
         TableSeating
     }
 
-    // Private fields
-    private int number; // Unique identifier for the seating (ID)
-    private SeatingTypeEnum seatingType; // Type of seating
-    private bool ifInside; // True if located inside, false otherwise
-    private string? specialNote; // Optional note about the seating
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
+    private int number;                   // Unique ID
+    private SeatingTypeEnum seatingType;  // Type of seating
+    private bool ifInside;                // True if inside
+    private string? specialNote;          // Optional note
 
-    // Public read-only properties
+    // -----------------------------------------------------
+    // Original Properties (private setters).
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to call the private setters directly.
+    // -----------------------------------------------------
+    
+    [XmlIgnore]
     public int Number
     {
-        get { return number; }
+        get => number;
+        private set
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentException("Number must be greater than zero.");
+            }
+            number = value;
+        }
     }
 
+    [XmlIgnore]
     public SeatingTypeEnum SeatingType
     {
-        get { return seatingType; }
+        get => seatingType;
+        private set => seatingType = value;
     }
 
+    [XmlIgnore]
     public bool IfInside
     {
-        get { return ifInside; }
+        get => ifInside;
+        private set => ifInside = value;
     }
 
+    [XmlIgnore]
     public string? SpecialNote
     {
-        get { return specialNote; }
+        get => specialNote;
+        private set => specialNote = value;
     }
 
-    // Static attribute
-    public static int TotalSeatings { get; private set; } = 0;
+    // -----------------------------------------------------
+    // Bridge properties for XML Serialization.
+    // They have public getters/setters so the serializer
+    // can set them. They call the original property
+    // to preserve any validation logic.
+    // -----------------------------------------------------
 
-    // Class extent (list of all seating instances)
+    [XmlElement("Number")]
+    public int NumberForXml
+    {
+        get => number;
+        set => Number = value;  // Calls the private setter (with validation)
+    }
+
+    [XmlElement("SeatingType")]
+    public SeatingTypeEnum SeatingTypeForXml
+    {
+        get => seatingType;
+        set => SeatingType = value;  // Calls the private setter
+    }
+
+    [XmlElement("IfInside")]
+    public bool IfInsideForXml
+    {
+        get => ifInside;
+        set => IfInside = value;    // Calls the private setter
+    }
+
+    [XmlElement("SpecialNote")]
+    public string? SpecialNoteForXml
+    {
+        get => specialNote;
+        set => SpecialNote = value; // Calls the private setter
+    }
+
+    // -----------------------------------------------------
+    // Static attribute & Class extent
+    // -----------------------------------------------------
+    public static int TotalSeatings { get; private set; } = 0;
     private static List<Seating> Seatings = new List<Seating>();
 
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults. DO NOT increment `TotalSeatings`
+    // here to avoid double-counting when deserializing.
+    // -----------------------------------------------------
+    public Seating()
+    {
+        // Provide valid defaults that won't break validation
+        number = 1;
+        seatingType = SeatingTypeEnum.TableSeating;
+        ifInside = false;
+        specialNote = null;
+    }
+
+    // -----------------------------------------------------
     // Constructor with special note
+    // -----------------------------------------------------
     public Seating(int number, SeatingTypeEnum seatingType, bool ifInside, string? specialNote)
     {
-        if (number <= 0)
-        {
-            throw new ArgumentException("Number must be greater than zero.");
-        }
+        Number = number;         // calls the private setter (validation)
+        SeatingType = seatingType;
+        IfInside = ifInside;
+        SpecialNote = specialNote;
 
-        this.number = number;
-        this.seatingType = seatingType;
-        this.ifInside = ifInside;
-        this.specialNote = specialNote;
-
-        // Increment static count and add to the class extent
         TotalSeatings++;
         Seatings.Add(this);
     }
 
+    // -----------------------------------------------------
     // Constructor without special note
+    // -----------------------------------------------------
     public Seating(int number, SeatingTypeEnum seatingType, bool ifInside)
-        : this(number, seatingType, ifInside, null) // Call the other constructor with null for specialNote
+        : this(number, seatingType, ifInside, null)
     {
     }
 
-    // Method to display seating information
+    // -----------------------------------------------------
+    // Method to display seating info
+    // -----------------------------------------------------
     public void DisplaySeatingInfo()
     {
         Console.WriteLine($"Seating Number: {Number}");
@@ -87,7 +161,9 @@ public class Seating
         Console.WriteLine($"Special Note: {SpecialNote ?? "None"}");
     }
 
+    // -----------------------------------------------------
     // Static method to display all seatings
+    // -----------------------------------------------------
     public static void DisplayAllSeatings()
     {
         Console.WriteLine("\n--- All Seatings ---");
@@ -98,7 +174,9 @@ public class Seating
         }
     }
 
-    // Serialization method
+    // -----------------------------------------------------
+    // Serialization / Deserialization
+    // -----------------------------------------------------
     public static void SaveToFile(string filePath)
     {
         try
@@ -116,7 +194,6 @@ public class Seating
         }
     }
 
-    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try

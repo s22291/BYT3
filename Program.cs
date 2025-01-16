@@ -9,37 +9,46 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 
 class Program
 {
     static void Main(string[] args) // Entry point of the program
     {
-        Employee employee = new Employee();
-        employee.Name = "Olga";
-        employee.Surname = "Smith";
-        employee.Salary = 5000m;
-        employee.Experience = 3;
-        employee.WorkedOvertimeDate = new DateTime(2021, 5, 15);
-        employee.Skills.Add("C#");
-        employee.Skills.Add("SQL");
 
-        // Print employee information
-        Console.WriteLine(employee.Name);
-        Console.WriteLine(employee.Surname);
-        Console.WriteLine(employee.Salary);
-        Console.WriteLine(employee.Experience);
-        Console.WriteLine(employee.WorkedOvertimeDate);
-        Console.WriteLine(employee.Skills.Count);
-        Console.WriteLine(employee.Skills[0]);
-        Console.WriteLine(employee.Skills[1]);
+     //For Employee Objects
+        string filePath = "EmployeesData.xml";
+        if (!File.Exists(filePath))
+        {
+            Console.WriteLine("File not found. Creating default data...");
 
-        List<string> lisr = new List<string> { "d", "s", "s" };
-        List<decimal> por = new List<decimal> { 2, 2, 4 };
+            var employee1 = new Employee("John", "Doe", 50000, 5);
+            var employee2 = new Employee("Jane", "Smith", 60000, 8, new DateTime(2023, 1, 15));
+         
+    
+            Employee.SaveToFile(filePath);
+        }
+            Employee.LoadFromFile(filePath);
+            // var employee3 = new Employee("Juan", " ", 50000, 5);
+            Employee.DisplayAllEmployees();
+            // Employee.SaveToFile(filePath);
 
-        Ingredient ingredient = new Ingredient("sxs", lisr, por, DateTime.Now);
 
-        ingredient.CountryOfOrigin.Add("Poland");
+
+        //For Cooks Objects
+        // string filePath = "CooksData.xml";
+        // if (!File.Exists(filePath))
+        // {
+        //     Console.WriteLine("File not found. Creating default data...");
+
+        //     var cook1 = new Cook(Cook.RoleType.ExecutiveChef, true, "Beef Wellington");
+        //     var cook2 = new Cook(Cook.RoleType.SousChef, false, " ");
+    
+        //      Cook.SaveToFile(filePath);
+        // }
+        //     Cook.LoadFromFile(filePath);
+        //     Cook.DisplayAllCooks();
     }
 }
 

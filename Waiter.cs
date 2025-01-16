@@ -13,48 +13,112 @@ using System.Xml.Serialization;
 
 public class Waiter
 {
-    // Private fields (no direct external access)
-    private decimal avgTipsValuePerDay; // Average value of tips per day
-    private int averageCustomersServedDaily; // Average customers served daily
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
+    private decimal avgTipsValuePerDay;
+    private int averageCustomersServedDaily;
 
-    // Public read-only properties
+    // -----------------------------------------------------
+    // Original properties (private setters).
+    // Mark them [XmlIgnore] so the serializer won't try
+    // to call the private setters directly.
+    // -----------------------------------------------------
+    
+    [XmlIgnore]
     public decimal AvgTipsValuePerDay
     {
-        get { return avgTipsValuePerDay; } // Expose the value, but not modifiable
+        get => avgTipsValuePerDay;
+        private set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentException("Average tips value per day cannot be negative.");
+            }
+            avgTipsValuePerDay = value;
+        }
     }
 
+    [XmlIgnore]
     public int AverageCustomersServedDaily
     {
-        get { return averageCustomersServedDaily; } // Expose the value, but not modifiable
+        get => averageCustomersServedDaily;
+        private set
+        {
+            if (value <= 0)
+            {
+                throw new ArgumentException("Average customers served daily must be greater than zero.");
+            }
+            averageCustomersServedDaily = value;
+        }
     }
 
-    // Static attribute (tracks total number of waiters)
-    public static int TotalWaiters { get; private set; } = 0;
-
-    // Class extent (stores all waiter instances privately)
-    private static List<Waiter> Waiters = new List<Waiter>();
-
-    // Derived attribute (calculated property, cannot be modified)
+    // -----------------------------------------------------
+    // Derived property (calculated, no setter).
+    // Typically marked [XmlIgnore] unless you want to
+    // serialize it too (then you'd make a bridging property).
+    // -----------------------------------------------------
+    [XmlIgnore]
     public decimal AverageTipsPerCustomer
     {
         get
         {
             if (averageCustomersServedDaily > 0)
             {
-                return avgTipsValuePerDay / averageCustomersServedDaily; // Avoid division by zero
+                return avgTipsValuePerDay / averageCustomersServedDaily;
             }
             return 0;
         }
     }
 
-    // Constructor (the only way to set values)
+    // -----------------------------------------------------
+    // Bridge properties for XML serialization.
+    // They have public getters/setters so the serializer
+    // can set them. They call the original private-setter
+    // properties, preserving all validation logic.
+    // -----------------------------------------------------
+    
+    [XmlElement("AvgTipsValuePerDay")]
+    public decimal AvgTipsValuePerDayForXml
+    {
+        get => avgTipsValuePerDay;
+        set => AvgTipsValuePerDay = value; // Uses the private setter
+    }
+
+    [XmlElement("AverageCustomersServedDaily")]
+    public int AverageCustomersServedDailyForXml
+    {
+        get => averageCustomersServedDaily;
+        set => AverageCustomersServedDaily = value; // Uses the private setter
+    }
+
+    // -----------------------------------------------------
+    // Static attributes and class extent
+    // -----------------------------------------------------
+    public static int TotalWaiters { get; private set; } = 0;
+    private static List<Waiter> Waiters = new List<Waiter>();
+
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults. DO NOT increment `TotalWaiters`
+    // here (avoid double-counting on deserialization).
+    // -----------------------------------------------------
+    public Waiter()
+    {
+        // Safe defaults so validation won't fail
+        avgTipsValuePerDay = 0.01m;
+        averageCustomersServedDaily = 1;
+    }
+
+    // -----------------------------------------------------
+    // Main constructor (the "real" one)
+    // -----------------------------------------------------
     public Waiter(decimal avgTipsValuePerDay, int averageCustomersServedDaily)
     {
         if (avgTipsValuePerDay < 0)
         {
             throw new ArgumentException("Average tips value per day cannot be negative.");
         }
-
         if (averageCustomersServedDaily <= 0)
         {
             throw new ArgumentException("Average customers served daily must be greater than zero.");
@@ -63,12 +127,13 @@ public class Waiter
         this.avgTipsValuePerDay = avgTipsValuePerDay;
         this.averageCustomersServedDaily = averageCustomersServedDaily;
 
-        // Increment static count and add to class extent
         TotalWaiters++;
         Waiters.Add(this);
     }
 
-    // Method to display waiter information
+    // -----------------------------------------------------
+    // Instance Methods
+    // -----------------------------------------------------
     public void DisplayWaiterInfo()
     {
         Console.WriteLine($"Average Tips Value Per Day: {AvgTipsValuePerDay:C}");
@@ -76,7 +141,9 @@ public class Waiter
         Console.WriteLine($"Average Tips Per Customer: {AverageTipsPerCustomer:C}");
     }
 
-    // Static method to display all waiters
+    // -----------------------------------------------------
+    // Static Methods
+    // -----------------------------------------------------
     public static void DisplayAllWaiters()
     {
         Console.WriteLine("\n--- All Waiters ---");
@@ -87,7 +154,6 @@ public class Waiter
         }
     }
 
-    // Serialization method
     public static void SaveToFile(string filePath)
     {
         try
@@ -105,7 +171,6 @@ public class Waiter
         }
     }
 
-    // Deserialization method
     public static void LoadFromFile(string filePath)
     {
         try

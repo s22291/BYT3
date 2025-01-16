@@ -12,14 +12,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
 
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Xml.Serialization;
-
 public class Drink
 {
+    // -----------------------------------------------------
     // Enum for Drinkware Type
+    // -----------------------------------------------------
     public enum DrinkwareTypeEnum
     {
         Glass,
@@ -28,49 +25,103 @@ public class Drink
         PlasticGlass
     }
 
-    // Private fields
-    private DrinkwareTypeEnum drinkwareType; // Type of drinkware
-    private bool ifSparkling; // Whether the drink is sparkling or not
+    // -----------------------------------------------------
+    // Private backing fields
+    // -----------------------------------------------------
+    private DrinkwareTypeEnum drinkwareType;
+    private bool ifSparkling;
 
-    // Public read-only properties
+    // -----------------------------------------------------
+    // Original properties (private setters).
+    // We mark them [XmlIgnore] so the serializer does NOT
+    // try to set them directly (which would fail due to private setters).
+    // -----------------------------------------------------
+    
+    [XmlIgnore]
     public DrinkwareTypeEnum DrinkwareType
     {
-        get { return drinkwareType; }
+        get => drinkwareType;
+        private set
+        {
+            // If you had custom validation logic, call it here
+            // For now, we assume the enum is always valid
+            drinkwareType = value;
+        }
     }
 
+    [XmlIgnore]
     public bool IfSparkling
     {
-        get { return ifSparkling; }
+        get => ifSparkling;
+        private set
+        {
+            ifSparkling = value;
+        }
     }
 
-    // Static attribute to count total drinks
-    public static int TotalDrinks { get; private set; } = 0;
+    // -----------------------------------------------------
+    // Bridge properties for XML Serialization.
+    // They have public getters/setters so the serializer
+    // can set them. Inside, they call the original
+    // properties (which enforce any validation logic).
+    // -----------------------------------------------------
+    
+    [XmlElement("DrinkwareType")]
+    public DrinkwareTypeEnum DrinkwareTypeForXml
+    {
+        get => drinkwareType;
+        set => DrinkwareType = value; // calls private setter
+    }
 
-    // Class extent to store all drink instances
+    [XmlElement("IfSparkling")]
+    public bool IfSparklingForXml
+    {
+        get => ifSparkling;
+        set => IfSparkling = value;   // calls private setter
+    }
+
+    // -----------------------------------------------------
+    // Static attribute & class extent
+    // -----------------------------------------------------
+    public static int TotalDrinks { get; private set; } = 0;
     private static List<Drink> Drinks = new List<Drink>();
 
-    // Constructor
+    // -----------------------------------------------------
+    // Parameterless constructor (REQUIRED by XML serializer).
+    // Provide safe defaults that won't break logic.
+    // Do NOT increment TotalDrinks here (avoid double-count).
+    // -----------------------------------------------------
+    public Drink()
+    {
+        // Provide default values:
+        drinkwareType = DrinkwareTypeEnum.Glass;
+        ifSparkling = false;
+    }
+
+    // -----------------------------------------------------
+    // Main constructor
+    // -----------------------------------------------------
     public Drink(DrinkwareTypeEnum drinkwareType, bool ifSparkling)
     {
-        // Validate drinkware type using Evaluator (assumes it throws if invalid)
-        this.drinkwareType = drinkwareType;
+        DrinkwareType = drinkwareType;  // calls private setter
+        IfSparkling = ifSparkling;      // calls private setter
 
-        // Assign other fields
-        this.ifSparkling = ifSparkling;
-
-        // Increment static count and add to class extent
         TotalDrinks++;
         Drinks.Add(this);
     }
 
+    // -----------------------------------------------------
     // Method to display drink information
+    // -----------------------------------------------------
     public void DisplayDrinkInfo()
     {
         Console.WriteLine($"Drinkware Type: {DrinkwareType}");
         Console.WriteLine($"Is Sparkling: {(IfSparkling ? "Yes" : "No")}");
     }
 
+    // -----------------------------------------------------
     // Static method to display all drinks
+    // -----------------------------------------------------
     public static void DisplayAllDrinks()
     {
         Console.WriteLine("\n--- All Drinks ---");
@@ -81,7 +132,9 @@ public class Drink
         }
     }
 
+    // -----------------------------------------------------
     // Serialization method
+    // -----------------------------------------------------
     public static void SaveToFile(string filePath)
     {
         try
@@ -99,7 +152,9 @@ public class Drink
         }
     }
 
+    // -----------------------------------------------------
     // Deserialization method
+    // -----------------------------------------------------
     public static void LoadFromFile(string filePath)
     {
         try
@@ -117,5 +172,6 @@ public class Drink
         }
     }
 }
+
 
 
