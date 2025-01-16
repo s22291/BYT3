@@ -187,6 +187,16 @@ public class Employee
             throw new ArgumentException("Experience cannot be negative.");
         Experience = newExperience;
     }
+    public void UpdateWorkedOvertimeDate(DateTime? newDate)
+{
+    if (newDate.HasValue && newDate.Value > DateTime.Now)
+    {
+        throw new ArgumentException("Worked overtime date cannot be in the future.");
+    }
+    WorkedOvertimeDate = newDate;
+}
+
+    
 
     // -----------------------------------------------------
     // Private static helper method for validation
